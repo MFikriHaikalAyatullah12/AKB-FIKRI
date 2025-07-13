@@ -1,128 +1,239 @@
 import React, { useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  Pressable,
+  Animated,
+  Dimensions,
+  StyleSheet,
+} from "react-native";
+
+const screenWidth = Dimensions.get("window").width;
+const imageSize = screenWidth / 3 - 20;
+const INITIAL_SCALE = 1;
+const MAX_SCALE = 2;
+const SCALE_INCREMENT = 0.2;
+
+const mainImages = [
+  "https://placekitten.com/200/201",
+  "https://placekitten.com/200/202",
+  "https://placekitten.com/200/203",
+  "https://placekitten.com/200/204",
+  "https://placekitten.com/200/205",
+  "https://placekitten.com/200/206",
+  "https://placekitten.com/200/207",
+  "https://placekitten.com/200/208",
+  "https://placekitten.com/200/209",
+];
+
+const altImages = [
+  "https://placebear.com/200/201",
+  "https://placebear.com/200/202",
+  "https://placebear.com/200/203",
+  "https://placebear.com/200/204",
+  "https://placebear.com/200/205",
+  "https://placebear.com/200/206",
+  "https://placebear.com/200/207",
+  "https://placebear.com/200/208",
+  "https://placebear.com/200/209",
+];
 
 export default function Index() {
-  // Daftar gambar utama dan cadangan
-  const mainImages = [
-    "https://picsum.photos/id/10/300/300",
-    "https://picsum.photos/id/11/300/300",
-    "https://picsum.photos/id/12/300/300",
-    "https://picsum.photos/id/13/300/300",
-    "https://picsum.photos/id/14/300/300",
-    "https://picsum.photos/id/15/300/300",
-    "https://picsum.photos/id/16/300/300",
-    "https://picsum.photos/id/17/300/300",
-    "https://picsum.photos/id/18/300/300",
-  ];
+  const [imageStates, setImageStates] = useState(
+    mainImages.map(() => ({
+      isAlt: false,
+      scale: new Animated.Value(INITIAL_SCALE),
+    }))
+  );
 
-  const alternateImages = [
-    "https://picsum.photos/id/19/300/300",
-    "https://picsum.photos/id/20/300/300",
-    "https://picsum.photos/id/21/300/300",
-    "https://picsum.photos/id/22/300/300",
-    "https://picsum.photos/id/23/300/300",
-    "https://picsum.photos/id/24/300/300",
-    "https://picsum.photos/id/25/300/300",
-    "https://picsum.photos/id/26/300/300",
-    "https://picsum.photos/id/27/300/300",
-  ];
+  const handlePress = (index: number) => {
+    const updatedStates = [...imageStates];
+    updatedStates[index].isAlt = !updatedStates[index].isAlt;
 
-  // State untuk menyimpan gambar yang sedang aktif dan scale
-  const [images, setImages] = useState(mainImages);
-  const [scales, setScales] = useState(Array(9).fill(1));
+    console.log(
+      `Gambar index ${index} ditekan, sekarang: ${updatedStates[index].isAlt ? "cadangan" : "utama"}`
+    );
 
-  // Fungsi untuk menangani klik gambar
-  const handleImagePress = (index: number) => {
-    // Buat salinan array images dan scales
-    const newImages = [...images];
-    const newScales = [...scales];
-    
-    // Toggle antara gambar utama dan cadangan
-    if (newImages[index] === mainImages[index]) {
-      newImages[index] = alternateImages[index];
-    } else {
-      newImages[index] = mainImages[index];
-    }
-    
-    // Update scale (maksimal 2x)
-    if (newScales[index] < 2) {
-      newScales[index] *= 1.2;
-    } else {
-      newScales[index] = 1; // Reset ke 1 jika sudah mencapai maksimal
-    }
-    
-    // Update state
-    setImages(newImages);
-    setScales(newScales);
+    updatedStates[index].scale.stopAnimation((currentScale: number) => {
+      const newScale =
+        currentScale + SCALE_INCREMENT <= MAX_SCALE
+          ? currentScale + SCALE_INCREMENT
+          : MAX_SCALE;
+
+      Animated.timing(updatedStates[index].scale, {
+        toValue: newScale,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    setImageStates(updatedStates);
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView 
-        contentContainerStyle={styles.scrollContainer}
+    <View style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          paddingVertical: 40,
+          gap: 30,
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* Segitiga di bagian atas */}
-        <View style={styles.triangle} />
+        <View
+          style={{
+            width: 0,
+            height: 0,
+            borderLeftWidth: 30,
+            borderRightWidth: 30,
+            borderBottomWidth: 60,
+            borderStyle: "solid",
+            backgroundColor: "transparent",
+            borderLeftColor: "transparent",
+            borderRightColor: "transparent",
+            borderBottomColor: "orange",
+          }}
+        />
 
         {/* Bentuk Pil (Oval Horizontal) */}
-        <View style={styles.pill}>
-          <Text style={styles.pillText}>105841105522</Text>
+        <View
+          style={{
+            backgroundColor: "blue",
+            paddingHorizontal: 30,
+            paddingVertical: 15,
+            borderRadius: 50,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+        >
+          <Text style={{ fontSize: 18, color: "white", fontWeight: "bold" }}>
+            105841105522
+          </Text>
         </View>
 
         {/* Persegi Panjang (Nama) */}
-        <View style={styles.nameBox}>
-          <Text style={styles.nameText}>M. FIKRI HAIKAL AYATULLAH</Text>
+        <View
+          style={{
+            backgroundColor: "green",
+            width: 220,
+            paddingVertical: 20,
+            alignItems: "center",
+            borderRadius: 15,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "bold", fontSize: 18 }}>
+            M. Fikri Haikal Ayatullah
+          </Text>
         </View>
 
         {/* Lingkaran Dekoratif */}
-        <View style={styles.circle} />
-        
+        <View
+          style={{
+            width: 30,
+            height: 30,
+            backgroundColor: "blue",
+            borderRadius: 15,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.22,
+            shadowRadius: 2.22,
+            elevation: 3,
+          }}
+        />
+
         {/* Container untuk kedua gambar berdampingan */}
-        <View style={styles.imageRow}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            paddingHorizontal: 20,
+            gap: 10,
+          }}
+        >
           {/* Gambar Profil */}
-          <View style={styles.imageShadow}>
-            <Image 
-              style={styles.profileImage} 
-              source={{ uri: "https://simak.unismuh.ac.id/upload/mahasiswa/105841105522_.jpg" }} 
+          <View
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 4.65,
+              elevation: 8,
+            }}
+          >
+            <Image
+              style={{
+                width: 150,
+                height: 150,
+                borderRadius: 75,
+                borderWidth: 3,
+                borderColor: "white",
+              }}
+              source={{
+                uri: "https://simak.unismuh.ac.id/upload/mahasiswa/105841105522_.jpg",
+              }}
             />
           </View>
-          
+
           {/* Gambar Tambahan */}
-          <View style={styles.imageShadow}>
-            <Image 
-              style={styles.profileImage} 
-              source={{ uri: "https://tse2.mm.bing.net/th/id/OIP.N9gK5s6MwPBr2lCKz0EpFwAAAA?pid=Api&P=0&h=220" }} 
+          <View
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 4.65,
+              elevation: 8,
+            }}
+          >
+            <Image
+              style={{
+                width: 150,
+                height: 150,
+                borderRadius: 75,
+                borderWidth: 3,
+                borderColor: "white",
+              }}
+              source={{
+                uri: "https://tse2.mm.bing.net/th/id/OIP.N9gK5s6MwPBr2lCKz0EpFwAAAA?pid=Api&P=0&h=220",
+              }}
             />
           </View>
         </View>
 
-        {/* Grid 3x3 */}
-        <View style={styles.gridContainer}>
-          {[0, 1, 2].map((row) => (
-            <View key={row} style={styles.gridRow}>
-              {[0, 1, 2].map((col) => {
-                const index = row * 3 + col;
-                return (
-                  <TouchableOpacity 
-                    key={col} 
-                    onPress={() => handleImagePress(index)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={styles.gridItem}>
-                      <Image 
-                        style={[
-                          styles.gridImage,
-                          { transform: [{ scale: scales[index] }] }
-                        ]} 
-                        source={{ uri: images[index] }} 
-                      />
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          ))}
+        {/* Grid 3x3 Gambar Interaktif */}
+        <View style={styles.grid}>
+          {mainImages.map((img, index) => {
+            const current = imageStates[index];
+            const source = { uri: current.isAlt ? altImages[index] : mainImages[index] };
+
+            return (
+              <Pressable key={index} onPress={() => handlePress(index)}>
+                <Animated.Image
+                  source={source}
+                  style={[
+                    styles.image,
+                    {
+                      transform: [{ scale: current.scale }],
+                    },
+                  ]}
+                />
+              </Pressable>
+            );
+          })}
         </View>
       </ScrollView>
     </View>
@@ -130,113 +241,16 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 40,
-    gap: 30,
-  },
-  triangle: {
-    width: 0,
-    height: 0,
-    borderLeftWidth: 30,
-    borderRightWidth: 30,
-    borderBottomWidth: 60,
-    borderStyle: "solid",
-    backgroundColor: "transparent",
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent",
-    borderBottomColor: "orange",
-  },
-  pill: {
-    backgroundColor: "blue",
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    borderRadius: 50,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  pillText: {
-    fontSize: 18, 
-    color: "white", 
-    fontWeight: "bold",
-  },
-  nameBox: {
-    backgroundColor: "green",
-    width: 220,
-    paddingVertical: 20,
-    alignItems: "center",
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  nameText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  circle: {
-    width: 30,
-    height: 30,
-    backgroundColor: "blue",
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-    elevation: 3,
-  },
-  imageRow: {
+  grid: {
     flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: 20,
     gap: 10,
   },
-  imageShadow: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.30,
-    shadowRadius: 4.65,
-    elevation: 8,
-  },
-  profileImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    borderWidth: 3,
-    borderColor: "white",
-  },
-  gridContainer: {
-    width: "90%",
-    aspectRatio: 1,
-    marginTop: 20,
-  },
-  gridRow: {
-    flex: 1,
-    flexDirection: "row",
-  },
-  gridItem: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 5,
-  },
-  gridImage: {
-    width: "100%",
-    height: "100%",
+  image: {
+    width: imageSize,
+    height: imageSize,
+    margin: 5,
     borderRadius: 10,
   },
 });
