@@ -1,256 +1,83 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  Pressable,
-  Animated,
-  Dimensions,
-  StyleSheet,
-} from "react-native";
+import { Image, ScrollView, Text, View } from "react-native";
 
-const screenWidth = Dimensions.get("window").width;
-const imageSize = screenWidth / 3 - 20;
-const INITIAL_SCALE = 1;
-const MAX_SCALE = 2;
-const SCALE_INCREMENT = 0.2;
-
-const mainImages = [
-  "https://placekitten.com/200/201",
-  "https://placekitten.com/200/202",
-  "https://placekitten.com/200/203",
-  "https://placekitten.com/200/204",
-  "https://placekitten.com/200/205",
-  "https://placekitten.com/200/206",
-  "https://placekitten.com/200/207",
-  "https://placekitten.com/200/208",
-  "https://placekitten.com/200/209",
+const daftarMahasiswa = [
+  { nama: "Juliani", nim: "105841104922" },
+  { nama: "Azzah Aulia Syarif", nim: "105841105022" },
+  { nama: "Syauqiah Mujahidah Yahya", nim: "105841105122" },
+  { nama: "Mar'atul Azizah", nim: "105841105222" },
+  { nama: "Fikrah Lejahtegis", nim: "105841105322" },
+  { nama: "Alya Anandha", nim: "105841105422" },
+  { nama: "M. Fikri Haikal Ayatullah", nim: "105841105522" }, // ← Kamu
+  { nama: "Muh Dirham Rahim", nim: "105841105622" },
+  { nama: "Zaskya Aulia Ashar", nim: "105841105722" },
+  { nama: "Muh Ilham Akbar", nim: "105841105822" },
+  { nama: "Zelvia", nim: "105841105922" },
+  { nama: "Andi Dhifta Rameyza Kailah", nim: "105841106022" },
 ];
 
-const altImages = [
-  "https://placebear.com/200/201",
-  "https://placebear.com/200/202",
-  "https://placebear.com/200/203",
-  "https://placebear.com/200/204",
-  "https://placebear.com/200/205",
-  "https://placebear.com/200/206",
-  "https://placebear.com/200/207",
-  "https://placebear.com/200/208",
-  "https://placebear.com/200/209",
-];
+const nimSaya = "105841105522";
 
-export default function Index() {
-  const [imageStates, setImageStates] = useState(
-    mainImages.map(() => ({
-      isAlt: false,
-      scale: new Animated.Value(INITIAL_SCALE),
-    }))
-  );
-
-  const handlePress = (index: number) => {
-    const updatedStates = [...imageStates];
-    updatedStates[index].isAlt = !updatedStates[index].isAlt;
-
-    console.log(
-      `Gambar index ${index} ditekan, sekarang: ${updatedStates[index].isAlt ? "cadangan" : "utama"}`
-    );
-
-    updatedStates[index].scale.stopAnimation((currentScale: number) => {
-      const newScale =
-        currentScale + SCALE_INCREMENT <= MAX_SCALE
-          ? currentScale + SCALE_INCREMENT
-          : MAX_SCALE;
-
-      Animated.timing(updatedStates[index].scale, {
-        toValue: newScale,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    });
-
-    setImageStates(updatedStates);
-  };
-
-  return (
-    <View style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          paddingVertical: 40,
-          gap: 30,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Segitiga di bagian atas */}
-        <View
-          style={{
-            width: 0,
-            height: 0,
-            borderLeftWidth: 30,
-            borderRightWidth: 30,
-            borderBottomWidth: 60,
-            borderStyle: "solid",
-            backgroundColor: "transparent",
-            borderLeftColor: "transparent",
-            borderRightColor: "transparent",
-            borderBottomColor: "orange",
-          }}
-        />
-
-        {/* Bentuk Pil (Oval Horizontal) */}
-        <View
-          style={{
-            backgroundColor: "blue",
-            paddingHorizontal: 30,
-            paddingVertical: 15,
-            borderRadius: 50,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-        >
-          <Text style={{ fontSize: 18, color: "white", fontWeight: "bold" }}>
-            105841105522
-          </Text>
-        </View>
-
-        {/* Persegi Panjang (Nama) */}
-        <View
-          style={{
-            backgroundColor: "green",
-            width: 220,
-            paddingVertical: 20,
-            alignItems: "center",
-            borderRadius: 15,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-        >
-          <Text style={{ color: "white", fontWeight: "bold", fontSize: 18 }}>
-            M. Fikri Haikal Ayatullah
-          </Text>
-        </View>
-
-        {/* Lingkaran Dekoratif */}
-        <View
-          style={{
-            width: 30,
-            height: 30,
-            backgroundColor: "blue",
-            borderRadius: 15,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.22,
-            shadowRadius: 2.22,
-            elevation: 3,
-          }}
-        />
-
-        {/* Container untuk kedua gambar berdampingan */}
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            paddingHorizontal: 20,
-            gap: 10,
-          }}
-        >
-          {/* Gambar Profil */}
-          <View
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.3,
-              shadowRadius: 4.65,
-              elevation: 8,
-            }}
-          >
-            <Image
-              style={{
-                width: 150,
-                height: 150,
-                borderRadius: 75,
-                borderWidth: 3,
-                borderColor: "white",
-              }}
-              source={{
-                uri: "https://simak.unismuh.ac.id/upload/mahasiswa/105841105522_.jpg",
-              }}
-            />
-          </View>
-
-          {/* Gambar Tambahan */}
-          <View
-            style={{
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.3,
-              shadowRadius: 4.65,
-              elevation: 8,
-            }}
-          >
-            <Image
-              style={{
-                width: 150,
-                height: 150,
-                borderRadius: 75,
-                borderWidth: 3,
-                borderColor: "white",
-              }}
-              source={{
-                uri: "https://tse2.mm.bing.net/th/id/OIP.N9gK5s6MwPBr2lCKz0EpFwAAAA?pid=Api&P=0&h=220",
-              }}
-            />
-          </View>
-        </View>
-
-        {/* Grid 3x3 Gambar Interaktif */}
-        <View style={styles.grid}>
-          {mainImages.map((img, index) => {
-            const current = imageStates[index];
-            const source = { uri: current.isAlt ? altImages[index] : mainImages[index] };
-
-            return (
-              <Pressable key={index} onPress={() => handlePress(index)}>
-                <Animated.Image
-                  source={source}
-                  style={[
-                    styles.image,
-                    {
-                      transform: [{ scale: current.scale }],
-                    },
-                  ]}
-                />
-              </Pressable>
-            );
-          })}
-        </View>
-      </ScrollView>
-    </View>
-  );
+function ambilDataSekitar(nimTarget: string, data: typeof daftarMahasiswa, jumlah = 5) {
+  const index = data.findIndex((item) => item.nim === nimTarget);
+  const sebelum = data.slice(Math.max(0, index - jumlah), index);
+  const sesudah = data.slice(index + 1, index + 1 + jumlah);
+  return [...sebelum, data[index], ...sesudah];
 }
 
-const styles = StyleSheet.create({
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 10,
-  },
-  image: {
-    width: imageSize,
-    height: imageSize,
-    margin: 5,
-    borderRadius: 10,
-  },
-});
+export default function Index() {
+  const dataFinal = ambilDataSekitar(nimSaya, daftarMahasiswa, 5);
+
+  const fontList = [
+    "MontserratItalic",
+    "OpenSansItalic",
+    "OpenSansVariable",
+    "PoppinsSemiBold",
+    "RalewayItalic",
+    "Lobster",
+    "SpaceMonoBoldItalic",
+    "UbuntuBold",
+    "IndieFlower",
+    "RobotoVariable",
+  ];
+
+  return (
+    <ScrollView style={{ flex: 1, backgroundColor: "#39FF14", padding: 10 }}>
+      <View style={{ flexDirection: "column" }}>
+        {dataFinal.map((item, index) => (
+          <View
+            key={item.nim}
+            style={{
+              backgroundColor: item.nim === nimSaya ? "#FFF200" : "rgba(255, 255, 255, 0.8)",
+              borderRadius: 12,
+              padding: 15,
+              alignItems: "center",
+              marginBottom: 15,
+              shadowColor: "#000",
+              shadowOpacity: 0.2,
+              shadowOffset: { width: 0, height: 2 },
+              shadowRadius: 4,
+              elevation: 4,
+            }}
+          >
+            <Image
+              source={{
+                uri: `https://simak.unismuh.ac.id/upload/mahasiswa/${item.nim}_.jpg`,
+              }}
+              style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 10 }}
+            />
+            <Text
+              style={{
+                fontFamily: fontList[index % fontList.length],
+                fontSize: 16,
+                textAlign: "center",
+              }}
+            >
+              {item.nama}
+            </Text>
+            <Text style={{ fontSize: 12, color: "#333" }}>{item.nim}</Text>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
+  );
+}
