@@ -1,83 +1,81 @@
-import { Image, ScrollView, Text, View } from "react-native";
+import { FontAwesome6 } from "@expo/vector-icons";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 
-const daftarMahasiswa = [
-  { nama: "Juliani", nim: "105841104922" },
-  { nama: "Azzah Aulia Syarif", nim: "105841105022" },
-  { nama: "Syauqiah Mujahidah Yahya", nim: "105841105122" },
-  { nama: "Mar'atul Azizah", nim: "105841105222" },
-  { nama: "Fikrah Lejahtegis", nim: "105841105322" },
-  { nama: "Alya Anandha", nim: "105841105422" },
-  { nama: "M. Fikri Haikal Ayatullah", nim: "105841105522" }, // ← Kamu
-  { nama: "Muh Dirham Rahim", nim: "105841105622" },
-  { nama: "Zaskya Aulia Ashar", nim: "105841105722" },
-  { nama: "Muh Ilham Akbar", nim: "105841105822" },
-  { nama: "Zelvia", nim: "105841105922" },
-  { nama: "Andi Dhifta Rameyza Kailah", nim: "105841106022" },
+const iconData = [
+  { key: "1", name: "angry", label: "Rage Demon" },
+  { key: "2", name: "grin-stars", label: "Starry Smile" },
+  { key: "3", name: "grin-tongue-squint", label: "Cheeky Grin" },
+  { key: "4", name: "flushed", label: "Flustered Face" },
+  { key: "5", name: "kiss-beam", label: "Beaming Kiss" },
+  { key: "6", name: "dizzy", label: "Dizzy Spell" },
+  { key: "7", name: "kiss", label: "Sweet Kiss" },
+  { key: "8", name: "grin-wink", label: "Winking Charm" },
+  { key: "9", name: "grin-alt", label: "Classic Smirk" },
+  { key: "10", name: "frown-open", label: "Open Disdain" }
 ];
 
-const nimSaya = "105841105522";
-
-function ambilDataSekitar(nimTarget: string, data: typeof daftarMahasiswa, jumlah = 5) {
-  const index = data.findIndex((item) => item.nim === nimTarget);
-  const sebelum = data.slice(Math.max(0, index - jumlah), index);
-  const sesudah = data.slice(index + 1, index + 1 + jumlah);
-  return [...sebelum, data[index], ...sesudah];
-}
-
 export default function Index() {
-  const dataFinal = ambilDataSekitar(nimSaya, daftarMahasiswa, 5);
-
-  const fontList = [
-    "MontserratItalic",
-    "OpenSansItalic",
-    "OpenSansVariable",
-    "PoppinsSemiBold",
-    "RalewayItalic",
-    "Lobster",
-    "SpaceMonoBoldItalic",
-    "UbuntuBold",
-    "IndieFlower",
-    "RobotoVariable",
-  ];
+  const renderIcon = ({ item }: any) => (
+    <View style={styles.itemBox}>
+      <FontAwesome6 name={item.name} size={38} color="#3e64a8" />
+      <Text style={styles.itemText}>{item.label}</Text>
+    </View>
+  );
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#39FF14", padding: 10 }}>
-      <View style={{ flexDirection: "column" }}>
-        {dataFinal.map((item, index) => (
-          <View
-            key={item.nim}
-            style={{
-              backgroundColor: item.nim === nimSaya ? "#FFF200" : "rgba(255, 255, 255, 0.8)",
-              borderRadius: 12,
-              padding: 15,
-              alignItems: "center",
-              marginBottom: 15,
-              shadowColor: "#000",
-              shadowOpacity: 0.2,
-              shadowOffset: { width: 0, height: 2 },
-              shadowRadius: 4,
-              elevation: 4,
-            }}
-          >
-            <Image
-              source={{
-                uri: `https://simak.unismuh.ac.id/upload/mahasiswa/${item.nim}_.jpg`,
-              }}
-              style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 10 }}
-            />
-            <Text
-              style={{
-                fontFamily: fontList[index % fontList.length],
-                fontSize: 16,
-                textAlign: "center",
-              }}
-            >
-              {item.nama}
-            </Text>
-            <Text style={{ fontSize: 12, color: "#333" }}>{item.nim}</Text>
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+    <View style={styles.wrapper}>
+      <Text style={styles.header}>10 Facial Expressions</Text>
+      <FlatList
+        data={iconData}
+        renderItem={renderIcon}
+        numColumns={2}
+        contentContainerStyle={styles.listContent}
+        columnWrapperStyle={styles.columnStyle}
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: "#eaf1f8",
+    paddingHorizontal: 14,
+    paddingTop: 30,
+  },
+  header: {
+    fontSize: 22,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 16,
+    color: "#2b3d52",
+  },
+  listContent: {
+    paddingBottom: 20,
+  },
+  columnStyle: {
+    justifyContent: "space-between",
+    marginBottom: 18,
+  },
+  itemBox: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    padding: 18,
+    marginHorizontal: 5,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  itemText: {
+    marginTop: 10,
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#3e64a8",
+    textAlign: "center",
+    textTransform: "uppercase",
+  },
+});
