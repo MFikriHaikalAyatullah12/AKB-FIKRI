@@ -14,7 +14,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profil" // harus cocok dengan nama file "profil.tsx"
+        name="about"
+        options={{
+          title: "About",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="info" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profil"
         options={{
           title: "Profile",
           tabBarIcon: ({ color, size }) => (

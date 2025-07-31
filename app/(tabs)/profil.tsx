@@ -18,13 +18,15 @@ export default function Profile() {
         style={styles.profileCard}
       >
         <Image 
-          source={require('../../assets/images/images1.jpeg')} // Gambar lokal
+          source={require('../../assets/images/images1.jpeg')} 
           style={styles.profileImage}
         />
         <Text style={styles.name}>M. FIKRI HAIKAL AYATULLAH</Text>
         <Text style={styles.detail}>Kelas: <Text style={styles.bold}>6B</Text></Text>
         <Text style={styles.detail}>NIM: <Text style={styles.bold}>105841105522</Text></Text>
         <Text style={styles.detail}>Prodi: <Text style={styles.bold}>Informatika</Text></Text>
+        <Text style={styles.detail}>Fakultas: <Text style={styles.bold}>TEKNIK</Text></Text>
+        <Text style={styles.detail}>Departemen: <Text style={styles.bold}>Teknik Informatika</Text></Text>
       </Animatable.View>
     </View>
   );
@@ -33,7 +35,7 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0faff', // warna jarang dipakai tapi keren
+    backgroundColor: '#f0faff',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,

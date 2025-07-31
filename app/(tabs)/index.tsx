@@ -17,11 +17,7 @@ export default function TabIndex() {
         />
         <Text style={styles.title}>Universitas Muhammadiyah Makassar</Text>
         <Text style={styles.description}>
-          Universitas Muhammadiyah Makassar (Unismuh Makassar) adalah salah satu perguruan tinggi swasta terkemuka di Indonesia Timur. Didirikan pada tahun 1963, kampus ini berada di bawah naungan Persyarikatan Muhammadiyah dan menjunjung tinggi nilai-nilai Islam dalam pengembangan ilmu pengetahuan.
-          {"\n\n"}
-          Unismuh Makassar memiliki visi untuk menjadi universitas yang unggul, modern, dan Islami dalam membentuk generasi yang cerdas, berintegritas, serta berakhlak mulia. Dengan mengusung moto “Ilmu Amaliah, Amal Ilmiah, Akhlakul Karimah”, Unismuh terus berinovasi dalam bidang pendidikan, penelitian, dan pengabdian kepada masyarakat.
-          {"\n\n"}
-          Lingkungan kampus yang religius, disiplin, serta didukung fasilitas yang lengkap menjadikan Unismuh sebagai pilihan strategis untuk menempuh pendidikan tinggi yang berkualitas dan berlandaskan nilai-nilai keislaman.
+          Universitas Muhammadiyah Makassar (Unismuh Makassar) adalah salah satu perguruan tinggi swasta terkemuka di Indonesia Timur...
         </Text>
       </Animatable.View>
     </ScrollView>
@@ -31,13 +27,13 @@ export default function TabIndex() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#e0f7fa', // Soft cyan (unik & cerah)
+    backgroundColor: '#e0f7fa',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
   },
   card: {
-    backgroundColor: '#fce4ec', // Pink pastel lembut
+    backgroundColor: '#fce4ec',
     borderRadius: 20,
     padding: 22,
     alignItems: 'center',
@@ -58,7 +54,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#5e60ce', // Indigo elegan
+    color: '#5e60ce',
     marginBottom: 12,
     textAlign: 'center',
   },

@@ -20,10 +20,10 @@ export default function TabIndex() {
           Aplikasi ini dibangun menggunakan React Native dan Expo.
           {"\n\n"}
           <Text style={styles.subtitle}>Apa itu React Native?</Text>
-          React Native adalah framework open-source yang dikembangkan oleh Meta (Facebook) untuk membangun aplikasi mobile lintas platform, yaitu Android dan iOS, hanya dengan satu basis kode JavaScript. React Native memungkinkan pengembang menggunakan komponen native dan API perangkat secara langsung dengan performa yang hampir setara aplikasi native.
+          React Native adalah framework open-source yang dikembangkan oleh Meta (Facebook) untuk membangun aplikasi mobile lintas platform, yaitu Android dan iOS, hanya dengan satu basis kode JavaScript.
           {"\n\n"}
           <Text style={styles.subtitle}>Apa itu Expo?</Text>
-          Expo adalah platform dan toolchain untuk mempermudah pengembangan aplikasi menggunakan React Native. Dengan Expo, developer dapat membangun, menjalankan, dan menguji aplikasi secara cepat tanpa perlu mengatur konfigurasi native yang kompleks. Expo menyediakan fitur seperti live reload, publish ke Expo Go, akses kamera, lokasi, media, dan banyak lagi hanya dengan sedikit konfigurasi.
+          Expo adalah platform dan toolchain untuk mempermudah pengembangan aplikasi menggunakan React Native.
           {"\n\n"}
           Kombinasi React Native dan Expo sangat ideal untuk membuat aplikasi mobile modern dengan proses pengembangan yang efisien dan cepat.
         </Text>
@@ -35,13 +35,13 @@ export default function TabIndex() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#d6f5d6', // pastel hijau mint
+    backgroundColor: '#d6f5d6',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
   },
   card: {
-    backgroundColor: '#cabbe9', // ungu lavender soft
+    backgroundColor: '#cabbe9',
     borderRadius: 20,
     padding: 22,
     width: '100%',
