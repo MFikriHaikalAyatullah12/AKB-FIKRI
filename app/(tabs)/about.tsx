@@ -17,15 +17,21 @@ export default function TabIndex() {
         </View>
 
         <Text style={styles.description}>
-          Aplikasi ini dibangun menggunakan React Native dan Expo.
+          Aplikasi ini dibuat untuk memenuhi tugas mata kuliah Pengembangan Aplikasi Mobile yang diberikan oleh dosen pengampu. Tujuannya adalah agar mahasiswa dapat memahami praktik langsung dalam membangun aplikasi mobile menggunakan teknologi modern seperti React Native dan Expo.
+
           {"\n\n"}
-          <Text style={styles.subtitle}>Apa itu React Native?</Text>
-          React Native adalah framework open-source yang dikembangkan oleh Meta (Facebook) untuk membangun aplikasi mobile lintas platform, yaitu Android dan iOS, hanya dengan satu basis kode JavaScript.
+          <Text style={styles.subtitle}>Fungsi dari Masing-Masing Halaman:</Text>
           {"\n\n"}
-          <Text style={styles.subtitle}>Apa itu Expo?</Text>
-          Expo adalah platform dan toolchain untuk mempermudah pengembangan aplikasi menggunakan React Native.
+          <Text style={styles.subtitle}>• Home:</Text> Menyajikan informasi umum tentang Universitas Muhammadiyah Makassar, sebagai kampus tempat pengembangan aplikasi ini dilakukan.
+          
           {"\n\n"}
-          Kombinasi React Native dan Expo sangat ideal untuk membuat aplikasi mobile modern dengan proses pengembangan yang efisien dan cepat.
+          <Text style={styles.subtitle}>• About:</Text> Menjelaskan secara detail mengenai tujuan pembuatan aplikasi, teknologi yang digunakan (React Native dan Expo), serta struktur dan fungsi dari setiap halaman dalam aplikasi.
+          
+          {"\n\n"}
+          <Text style={styles.subtitle}>• Profil:</Text> Menampilkan data pengguna seperti nama lengkap, NIM, kelas, program studi, fakultas, dan departemen sebagai simulasi fitur data diri dalam aplikasi.
+
+          {"\n\n"}
+          Dengan membangun aplikasi ini, mahasiswa diharapkan mampu menerapkan teori yang dipelajari di kelas ke dalam proyek nyata berbasis React Native dan memahami proses kerja pembuatan aplikasi lintas platform secara praktis dan efisien.
         </Text>
       </Animatable.View>
     </ScrollView>

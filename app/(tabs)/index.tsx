@@ -17,7 +17,13 @@ export default function TabIndex() {
         />
         <Text style={styles.title}>Universitas Muhammadiyah Makassar</Text>
         <Text style={styles.description}>
-          Universitas Muhammadiyah Makassar (Unismuh Makassar) adalah salah satu perguruan tinggi swasta terkemuka di Indonesia Timur...
+          Universitas Muhammadiyah Makassar (Unismuh Makassar) adalah perguruan tinggi swasta yang berdiri sejak 19 Juni 1963 dan merupakan bagian dari amal usaha Muhammadiyah. Kampus ini berlokasi di Jl. Sultan Alauddin No. 259, Makassar, dan dikenal sebagai salah satu PTS unggulan di Indonesia Timur. 
+          {'\n\n'}
+          Unismuh memiliki 7 fakultas dengan lebih dari 34 program studi serta program pascasarjana. Pada tahun 2024, Unismuh menjadi perguruan tinggi Muhammadiyah pertama di kawasan Indonesia Timur yang meraih Akreditasi Unggul dari BAN-PT. 
+          {'\n\n'}
+          Fasilitas kampus meliputi gedung Iqra Tower, Masjid Subulussalam Al-Khoory, Balai Sidang Mukhtamar, perpustakaan modern, dan rusunawa mahasiswa. Civitas akademikanya mencakup lebih dari 22.000 mahasiswa dan lebih dari 200 dosen. 
+          {'\n\n'}
+          Unismuh juga aktif menjalin kerja sama internasional serta meraih prestasi nasional, seperti dosen terbaik versi SINTA dan kampus penerima program KMMI dari Kemendikbud. Pendaftaran mahasiswa baru dibuka setiap tahun dengan berbagai jalur termasuk CBT dan nilai rapor, serta tersedia beasiswa unggulan seperti Bibit Unggul Persyarikatan.
         </Text>
       </Animatable.View>
     </ScrollView>
