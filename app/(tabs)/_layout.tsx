@@ -1,14 +1,9 @@
 import { Tabs } from "expo-router";
-import Entypo from '@expo/vector-icons/Entypo';
 import { Feather } from "@expo/vector-icons";
 
 export default function TabLayout() {
   return (
-    <Tabs
-      screenOptions={() => ({
-        tabBarActiveTintColor: "brown",
-      })}
-    >
+    <Tabs screenOptions={{ tabBarActiveTintColor: "#1c92d2" }}>
       <Tabs.Screen
         name="index"
         options={{
@@ -18,11 +13,10 @@ export default function TabLayout() {
           ),
         }}
       />
-
       <Tabs.Screen
-        name="about"
+        name="profil" // harus cocok dengan nama file "profil.tsx"
         options={{
-          title: "Tentang Saya",
+          title: "Profile",
           tabBarIcon: ({ color, size }) => (
             <Feather name="user" size={size} color={color} />
           ),
