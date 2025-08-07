@@ -1,73 +1,86 @@
-import { Text, View, Image, ScrollView, StyleSheet } from "react-native";
-import * as Animatable from 'react-native-animatable';
+import { ScrollView, Text, TouchableOpacity, View, StyleSheet, StatusBar } from 'react-native';
+import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function TabIndex() {
+const users = [
+  { id: '1', name: 'BASO HAMZAH' },
+  { id: '2', name: 'M. FIKRI HAIKAL AYATULLAH' },
+  { id: '3', name: 'MUH. ILHAM AKBAR' },
+  { id: '4', name: 'ALIEF RYANTO RAHMAN' },
+  { id: '5', name: 'FIKRAH LEJAHTEGIS' },
+  { id: '6', name: 'MUH. DIRHAM RAHIM' },
+  { id: '7', name: 'MUH. AKBAR HAERUDDIN' },
+  { id: '8', name: 'AHMAD FAUZAN' },
+  { id: '9', name: 'SYAUQIAH MUJAHIDAH YAHYA' },
+  { id: '10', name: 'AZZAH AULIA SYARIF' },
+];
+
+export default function HomePage() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Animatable.View 
-        animation="zoomInUp" 
-        delay={200} 
-        duration={800}
-        style={styles.card}
-      >
-        <Image 
-          source={{ uri: 'https://news.unismuh.ac.id/wp-content/uploads/2023/04/51231776_108783916909288_5111860601001345024_n.jpg' }} 
-          style={styles.image}
-          resizeMode="cover"
-        />
-        <Text style={styles.title}>Universitas Muhammadiyah Makassar</Text>
-        <Text style={styles.description}>
-          Universitas Muhammadiyah Makassar (Unismuh Makassar) adalah perguruan tinggi swasta yang berdiri sejak 19 Juni 1963 dan merupakan bagian dari amal usaha Muhammadiyah. Kampus ini berlokasi di Jl. Sultan Alauddin No. 259, Makassar, dan dikenal sebagai salah satu PTS unggulan di Indonesia Timur. 
-          {'\n\n'}
-          Unismuh memiliki 7 fakultas dengan lebih dari 34 program studi serta program pascasarjana. Pada tahun 2024, Unismuh menjadi perguruan tinggi Muhammadiyah pertama di kawasan Indonesia Timur yang meraih Akreditasi Unggul dari BAN-PT. 
-          {'\n\n'}
-          Fasilitas kampus meliputi gedung Iqra Tower, Masjid Subulussalam Al-Khoory, Balai Sidang Mukhtamar, perpustakaan modern, dan rusunawa mahasiswa. Civitas akademikanya mencakup lebih dari 22.000 mahasiswa dan lebih dari 200 dosen. 
-          {'\n\n'}
-          Unismuh juga aktif menjalin kerja sama internasional serta meraih prestasi nasional, seperti dosen terbaik versi SINTA dan kampus penerima program KMMI dari Kemendikbud. Pendaftaran mahasiswa baru dibuka setiap tahun dengan berbagai jalur termasuk CBT dan nilai rapor, serta tersedia beasiswa unggulan seperti Bibit Unggul Persyarikatan.
-        </Text>
-      </Animatable.View>
+      <StatusBar barStyle="dark-content" />
+      <Text style={styles.header}>
+        <Ionicons name="people-circle" size={28} color="#3a7bd5" />{' '}
+        <Text style={styles.headerText}>Daftar Mahasiswa</Text>
+      </Text>
+
+      {users.map((user) => (
+        <TouchableOpacity
+          key={user.id}
+          onPress={() => router.push(`/user/${user.id}`)}
+          style={styles.card}
+          activeOpacity={0.85}
+        >
+          <Ionicons
+            name="person-circle-outline"
+            size={36}
+            color="#4a90e2"
+            style={styles.icon}
+          />
+          <Text style={styles.nameText}>{user.name}</Text>
+        </TouchableOpacity>
+      ))}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    backgroundColor: '#e0f7fa',
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 24,
+    backgroundColor: '#eef5ff',
+  },
+  header: {
+    fontSize: 26,
+    fontWeight: '700',
+    marginBottom: 20,
+    color: '#3a7bd5',
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#3a7bd5',
   },
   card: {
-    backgroundColor: '#fce4ec',
-    borderRadius: 20,
-    padding: 22,
+    flexDirection: 'row',
     alignItems: 'center',
-    elevation: 6,
-    shadowColor: '#5e60ce',
-    shadowOpacity: 0.25,
-    shadowOffset: { width: 0, height: 5 },
-    shadowRadius: 10,
-    width: '100%',
-    maxWidth: 380,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
   },
-  image: {
-    width: '100%',
-    height: 190,
-    borderRadius: 14,
-    marginBottom: 18,
+  icon: {
+    marginRight: 14,
   },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#5e60ce',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: 15,
-    color: '#3a3a3c',
-    textAlign: 'justify',
-    lineHeight: 24,
+  nameText: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#2b2d42',
+    flexShrink: 1,
   },
 });
