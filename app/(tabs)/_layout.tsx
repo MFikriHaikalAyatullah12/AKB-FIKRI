@@ -153,6 +153,20 @@ export default function TabLayout() {
       />
       
       <Tabs.Screen
+        name="reviews"
+        options={{
+          title: "Reviews",
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialIcons 
+              name={focused ? "rate-review" : "rate-review"} 
+              size={size} 
+              color={color} 
+            />
+          ),
+        }}
+      />
+      
+      <Tabs.Screen
         name="profile-new"
         options={{
           title: "Profile",

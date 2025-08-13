@@ -617,9 +617,10 @@ const styles = StyleSheet.create({
   },
   productImage: {
     width: '100%',
-    height: 160,
+    height: 120,
     borderRadius: 15,
     marginBottom: 12,
+    resizeMode: 'cover',
   },
   productInfo: {
     flex: 1,
