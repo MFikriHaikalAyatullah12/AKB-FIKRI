@@ -2,20 +2,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-  Alert,
-  Dimensions,
-  FlatList,
-  RefreshControl,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    Alert,
+    Dimensions,
+    FlatList,
+    RefreshControl,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { CategoryCard } from '../../components/CategoryCard';
 import { LoadingScreen } from '../../components/LoadingScreen';
 import { ProductCard } from '../../components/ProductCard';
+import { ProductSizeModal } from '../../components/ProductSizeModal';
 import { SaleBanner } from '../../components/SaleBanner';
 import { COLORS, SHADOWS, SIZES } from '../../constants/theme';
 
@@ -34,6 +35,7 @@ const featuredProducts = [
     badge: 'SALE',
     discount: '31%',
     inStock: true,
+    sizes: ['XS', 'S', 'M', 'L', 'XL']
   },
   {
     id: '2',
@@ -46,6 +48,7 @@ const featuredProducts = [
     badge: 'NEW',
     discount: '35%',
     inStock: true,
+    sizes: ['S', 'M', 'L', 'XL']
   },
   {
     id: '3',
@@ -58,6 +61,7 @@ const featuredProducts = [
     badge: 'SALE',
     discount: '29%',
     inStock: true,
+    sizes: ['S', 'M', 'L', 'XL', 'XXL']
   },
   {
     id: '4',
@@ -70,6 +74,7 @@ const featuredProducts = [
     badge: 'NEW',
     discount: '20%',
     inStock: true,
+    sizes: ['28', '30', '32', '34', '36']
   },
 ];
 
@@ -101,10 +106,12 @@ const categories = [
 ];
 
 export default function HomePage() {
-  const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -165,8 +172,13 @@ export default function HomePage() {
     router.push(`/(tabs)/categories/${categoryId}`);
   };
 
-  const handleAddToCart = (productId: string) => {
-    Alert.alert('Success', 'Item added to cart!');
+  const handleAddToCart = (productId: string, size: string) => {
+    Alert.alert('Success', `Item (Size: ${size}) added to cart!`);
+  };
+
+  const openSizeModal = (product: any) => {
+    setSelectedProduct(product);
+    setModalVisible(true);
   };
 
   const handleToggleFavorite = (productId: string) => {
@@ -179,11 +191,13 @@ export default function HomePage() {
 
   const renderProductCard = ({ item }: { item: typeof featuredProducts[0] }) => (
     <ProductCard
-      {...item}
+      product={{
+        ...item,
+        isFavorite: favorites.includes(item.id)
+      }}
       onPress={() => handleProductPress(item.id)}
-      onAddToCart={() => handleAddToCart(item.id)}
+      onAddToCart={(product) => openSizeModal(product)}
       onToggleFavorite={() => handleToggleFavorite(item.id)}
-      isFavorite={favorites.includes(item.id)}
     />
   );
 
@@ -326,6 +340,14 @@ export default function HomePage() {
           />
         </View>
       </ScrollView>
+
+      {/* Product Size Modal */}
+      <ProductSizeModal
+        visible={modalVisible}
+        product={selectedProduct}
+        onClose={() => setModalVisible(false)}
+        onAddToCart={handleAddToCart}
+      />
     </View>
   );
 }

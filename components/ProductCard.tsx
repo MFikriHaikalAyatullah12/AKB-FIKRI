@@ -1,53 +1,61 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { COLORS, SHADOWS, SIZES } from '../constants/theme';
+import { ProductSizeModal } from './ProductSizeModal';
 
 const { width } = Dimensions.get('window');
-const cardWidth = (width - (SIZES.lg * 3)) / 2;
+const cardWidth = (width - SIZES.lg * 3) / 2;
 
-interface ProductCardProps {
+interface Product {
   id: string;
   name: string;
+  brand?: string;
   price: number;
   originalPrice?: number;
   image: string;
   rating?: number;
   reviews?: number;
-  badge?: 'SALE' | 'NEW' | string;
-  discount?: string;
-  inStock?: boolean;
-  onPress: () => void;
-  onAddToCart: () => void;
-  onToggleFavorite: () => void;
   isFavorite?: boolean;
+  sizes?: string[];
 }
 
-export function ProductCard({
-  id,
-  name,
-  price,
-  originalPrice,
-  image,
-  rating,
-  reviews,
-  badge,
-  discount,
-  inStock = true,
-  onPress,
-  onAddToCart,
+interface ProductCardProps {
+  product: Product;
+  onPress?: () => void;
+  onAddToCart?: (product: Product) => void;
+  onToggleFavorite?: (productId: string) => void;
+  onPress_backup?: () => void;
+}
+
+export function ProductCard({ 
+  product, 
+  onPress, 
+  onAddToCart, 
   onToggleFavorite,
-  isFavorite = false,
+  onPress_backup
 }: ProductCardProps) {
-  const getBadgeColor = (badgeType: string) => {
-    switch (badgeType.toUpperCase()) {
-      case 'SALE':
-        return COLORS.primary;
-      case 'NEW':
-        return COLORS.accent;
-      default:
-        return COLORS.warning;
-    }
+  const [isFavorite, setIsFavorite] = useState(product.isFavorite || false);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // Default sizes if not provided
+  const productWithSizes = {
+    ...product,
+    sizes: product.sizes || ['S', 'M', 'L', 'XL']
+  };
+
+  const handleToggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+    onToggleFavorite?.(product.id);
+  };
+
+  const handleAddToCartPress = () => {
+    setModalVisible(true);
+  };
+
+  const handleModalAddToCart = (productId: string, size: string) => {
+    console.log(`Added product ${productId} with size ${size} to cart`);
+    Alert.alert('Success', `${product.name} (Size: ${size}) added to cart!`);
   };
 
   const renderStars = (rating: number) => {
@@ -72,81 +80,64 @@ export function ProductCard({
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
-      <View style={styles.imageContainer}>
-        <Image source={{ uri: image }} style={styles.image} />
-        
-        {/* Badge */}
-        {badge && (
-          <View style={[styles.badge, { backgroundColor: getBadgeColor(badge) }]}>
-            <Text style={styles.badgeText}>{badge}</Text>
-          </View>
-        )}
-
-        {/* Discount */}
-        {discount && (
-          <View style={styles.discountBadge}>
-            <Text style={styles.discountText}>-{discount}</Text>
-          </View>
-        )}
-
-        {/* Favorite Button */}
-        <TouchableOpacity style={styles.favoriteButton} onPress={onToggleFavorite}>
-          <Ionicons 
-            name={isFavorite ? "heart" : "heart-outline"} 
-            size={20} 
-            color={isFavorite ? COLORS.primary : COLORS.textLight} 
-          />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.content}>
-        <Text style={styles.name} numberOfLines={2}>{name}</Text>
-        
-        {/* Rating */}
-        {rating && (
-          <View style={styles.ratingContainer}>
-            <View style={styles.starsContainer}>
-              {renderStars(rating)}
-            </View>
-            <Text style={styles.ratingText}>({reviews || 0})</Text>
-          </View>
-        )}
-
-        {/* Price */}
-        <View style={styles.priceContainer}>
-          <Text style={styles.price}>${price.toFixed(2)}</Text>
-          {originalPrice && (
-            <Text style={styles.originalPrice}>${originalPrice.toFixed(2)}</Text>
-          )}
+    <View style={styles.container}>
+      <TouchableOpacity 
+        style={styles.card} 
+        onPress={onPress || onPress_backup}
+        activeOpacity={0.8}
+      >
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: product.image }} style={styles.image} />
+          <TouchableOpacity 
+            style={styles.favoriteButton}
+            onPress={handleToggleFavorite}
+          >
+            <Ionicons 
+              name={isFavorite ? "heart" : "heart-outline"} 
+              size={20} 
+              color={isFavorite ? "#FF6B6B" : COLORS.textLight} 
+            />
+          </TouchableOpacity>
         </View>
+        
+        <View style={styles.contentContainer}>
+          {product.brand && (
+            <Text style={styles.brandName}>{product.brand}</Text>
+          )}
+          <Text style={styles.productName} numberOfLines={2}>{product.name}</Text>
+          
+          {product.rating && (
+            <View style={styles.ratingContainer}>
+              <View style={styles.starsContainer}>
+                {renderStars(product.rating)}
+              </View>
+              <Text style={styles.ratingText}>({product.reviews || 0})</Text>
+            </View>
+          )}
+          
+          <View style={styles.priceContainer}>
+            <Text style={styles.price}>${product.price.toFixed(2)}</Text>
+            {product.originalPrice && (
+              <Text style={styles.originalPrice}>${product.originalPrice.toFixed(2)}</Text>
+            )}
+          </View>
+        </View>
+      </TouchableOpacity>
+      
+      <TouchableOpacity 
+        style={styles.addButton}
+        onPress={handleAddToCartPress}
+      >
+        <Ionicons name="add" size={20} color={COLORS.background} />
+      </TouchableOpacity>
 
-        {/* Stock Status */}
-        {!inStock && <Text style={styles.outOfStock}>Out of Stock</Text>}
-
-        {/* Add to Cart Button */}
-        <TouchableOpacity 
-          style={[
-            styles.addToCartButton,
-            !inStock && styles.addToCartButtonDisabled
-          ]} 
-          onPress={onAddToCart}
-          disabled={!inStock}
-        >
-          <Ionicons 
-            name="bag-add-outline" 
-            size={16} 
-            color={inStock ? COLORS.background : COLORS.textLight} 
-          />
-          <Text style={[
-            styles.addToCartText,
-            !inStock && styles.addToCartTextDisabled
-          ]}>
-            Add to Cart
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
+      <ProductSizeModal
+        visible={modalVisible}
+        product={productWithSizes}
+        onClose={() => setModalVisible(false)}
+        onAddToCart={handleModalAddToCart}
+      />
+    </View>
   );
 }
 
@@ -157,6 +148,9 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.radiusLg,
     marginBottom: SIZES.lg,
     ...SHADOWS.medium,
+  },
+  card: {
+    flex: 1,
   },
   imageContainer: {
     position: 'relative',
@@ -170,33 +164,6 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
   },
-  badge: {
-    position: 'absolute',
-    top: SIZES.md,
-    left: SIZES.md,
-    paddingHorizontal: SIZES.sm,
-    paddingVertical: SIZES.xs,
-    borderRadius: SIZES.radiusSm,
-  },
-  badgeText: {
-    color: COLORS.background,
-    fontSize: SIZES.textXs,
-    fontWeight: 'bold',
-  },
-  discountBadge: {
-    position: 'absolute',
-    top: SIZES.md,
-    right: SIZES.md,
-    backgroundColor: COLORS.warning,
-    paddingHorizontal: SIZES.sm,
-    paddingVertical: SIZES.xs,
-    borderRadius: SIZES.radiusSm,
-  },
-  discountText: {
-    color: COLORS.background,
-    fontSize: SIZES.textXs,
-    fontWeight: 'bold',
-  },
   favoriteButton: {
     position: 'absolute',
     bottom: SIZES.md,
@@ -209,20 +176,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     ...SHADOWS.small,
   },
-  content: {
+  contentContainer: {
     padding: SIZES.md,
+    paddingBottom: SIZES.lg,
   },
-  name: {
-    fontSize: SIZES.textBase,
+  brandName: {
+    fontSize: SIZES.textXs,
+    color: COLORS.textSecondary,
+    marginBottom: SIZES.xs,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  productName: {
+    fontSize: SIZES.textSm,
     fontWeight: '600',
     color: COLORS.textPrimary,
-    marginBottom: SIZES.xs,
+    marginBottom: SIZES.sm,
     lineHeight: 20,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: SIZES.xs,
+    marginBottom: SIZES.sm,
   },
   starsContainer: {
     flexDirection: 'row',
@@ -230,48 +205,33 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: SIZES.textXs,
-    color: COLORS.textLight,
+    color: COLORS.textSecondary,
   },
   priceContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: SIZES.sm,
+    justifyContent: 'space-between',
   },
   price: {
     fontSize: SIZES.textLg,
     fontWeight: 'bold',
-    color: COLORS.primary,
-    marginRight: SIZES.sm,
+    color: COLORS.textPrimary,
   },
   originalPrice: {
     fontSize: SIZES.textSm,
     color: COLORS.textLight,
     textDecorationLine: 'line-through',
   },
-  outOfStock: {
-    fontSize: SIZES.textXs,
-    color: COLORS.error,
-    fontWeight: '600',
-    marginBottom: SIZES.sm,
-  },
-  addToCartButton: {
+  addButton: {
+    position: 'absolute',
+    bottom: SIZES.md,
+    right: SIZES.md,
     backgroundColor: COLORS.primary,
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: 'center',
-    paddingVertical: SIZES.sm,
-    borderRadius: SIZES.radiusSm,
-  },
-  addToCartButtonDisabled: {
-    backgroundColor: COLORS.backgroundGray,
-  },
-  addToCartText: {
-    color: COLORS.background,
-    fontSize: SIZES.textSm,
-    fontWeight: '600',
-    marginLeft: SIZES.xs,
-  },
-  addToCartTextDisabled: {
-    color: COLORS.textLight,
+    alignItems: 'center',
+    ...SHADOWS.medium,
   },
 });

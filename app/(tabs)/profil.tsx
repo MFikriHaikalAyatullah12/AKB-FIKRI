@@ -16,10 +16,10 @@ import { COLORS, SHADOWS, SIZES } from '../../constants/theme';
 import { useAuth } from '../../context/AuthContext';
 
 const userProfile = {
-  name: 'Sarah Johnson',
-  email: 'sarah.johnson@gmail.com',
-  phone: '+1 (555) 123-4567',
-  avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face',
+  name: 'Kelompok AKB Fikri, Dirham, Kiky',
+  email: 'kelompok.akb@example.com',
+  phone: '+62 (812) 345-6789',
+  avatar: 'https://i.pinimg.com/564x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg',
   memberSince: '2023',
   totalOrders: 24,
   totalSpent: 1247.89,

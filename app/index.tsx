@@ -2,12 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useEffect } from 'react';
 import {
-    Image,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { COLORS, SHADOWS, SIZES } from '../constants/theme';
 import { useAuth } from '../context/AuthContext';
@@ -58,15 +58,15 @@ export default function WelcomeScreen() {
           </View>
         </View>
 
+        {/* Test Account Info */}
+        <View style={styles.testInfoContainer}>
+          <Text style={styles.testInfoTitle}>For Testing:</Text>
+          <Text style={styles.testInfoText}>Email: fikri123@gmail.com</Text>
+          <Text style={styles.testInfoText}>Password: ayatullah1945</Text>
+        </View>
+
         {/* Action Buttons */}
         <View style={styles.buttonContainer}>
-          {/* Test Account Info */}
-          <View style={styles.testInfoContainer}>
-            <Text style={styles.testInfoTitle}>For Testing:</Text>
-            <Text style={styles.testInfoText}>Email: fikri123@gmail.com</Text>
-            <Text style={styles.testInfoText}>Password: ayatullah1945</Text>
-          </View>
-
           <TouchableOpacity
             style={styles.loginButton}
             onPress={() => router.push('/auth/login')}
@@ -90,13 +90,6 @@ export default function WelcomeScreen() {
             </Text>
             <Ionicons name="arrow-forward" size={16} color={COLORS.backgroundLight} />
           </TouchableOpacity>
-
-          {/* Test Account Info */}
-          <View style={styles.testInfoContainer}>
-            <Text style={styles.testInfoTitle}>For Testing:</Text>
-            <Text style={styles.testInfoText}>Email: fikri123@gmail.com</Text>
-            <Text style={styles.testInfoText}>Password: ayatullah1945</Text>
-          </View>
         </View>
 
         {/* Decorative Elements */}
@@ -118,18 +111,19 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     justifyContent: 'space-between',
     paddingHorizontal: SIZES.xl,
-    paddingVertical: 60,
+    paddingVertical: 40,
     position: 'relative',
     overflow: 'hidden',
   },
   logoContainer: {
     alignItems: 'center',
-    marginTop: 60,
+    marginTop: 40,
+    marginBottom: 20,
   },
   logo: {
-    width: 120,
-    height: 120,
-    marginBottom: SIZES.lg,
+    width: 100,
+    height: 100,
+    marginBottom: SIZES.md,
     tintColor: COLORS.background,
   },
   brandName: {
@@ -149,7 +143,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginVertical: 40,
+    marginVertical: 30,
+    paddingHorizontal: SIZES.md,
   },
   feature: {
     alignItems: 'center',
@@ -162,36 +157,36 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
   },
-  buttonContainer: {
-    paddingBottom: 40,
-  },
   testInfoContainer: {
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: SIZES.radiusLg,
-    padding: SIZES.lg,
-    marginBottom: SIZES.lg,
+    padding: SIZES.md,
+    marginBottom: SIZES.md,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.2)',
   },
   testInfoTitle: {
-    fontSize: SIZES.textBase,
+    fontSize: SIZES.textSm,
     fontWeight: 'bold',
     color: COLORS.background,
-    marginBottom: SIZES.sm,
+    marginBottom: SIZES.xs,
     textAlign: 'center',
   },
   testInfoText: {
-    fontSize: SIZES.textSm,
+    fontSize: SIZES.textXs,
     color: COLORS.backgroundLight,
     textAlign: 'center',
     opacity: 0.9,
   },
+  buttonContainer: {
+    paddingBottom: 20,
+  },
   loginButton: {
     backgroundColor: COLORS.background,
     borderRadius: SIZES.radiusFull,
-    paddingVertical: SIZES.lg,
+    paddingVertical: SIZES.md,
     alignItems: 'center',
-    marginBottom: SIZES.lg,
+    marginBottom: SIZES.md,
     ...SHADOWS.large,
   },
   loginButtonText: {
@@ -204,9 +199,9 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.radiusFull,
     borderWidth: 2,
     borderColor: COLORS.background,
-    paddingVertical: SIZES.lg,
+    paddingVertical: SIZES.md,
     alignItems: 'center',
-    marginBottom: SIZES.lg,
+    marginBottom: SIZES.md,
   },
   registerButtonText: {
     fontSize: SIZES.textLg,

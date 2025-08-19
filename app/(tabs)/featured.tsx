@@ -12,41 +12,39 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { ProductSizeModal } from '../../components/ProductSizeModal';
 
 const { width } = Dimensions.get('window');
 
 const featuredCollections = [
   {
-    id: 'trending',
-    title: 'Trending Now',
-    subtitle: 'What everyone is buying',
-    color: '#FF6B6B',
-    icon: 'trending-up-outline',
-    count: 24
+    id: 'new-collection',
+    title: 'New collection',
+    subtitle: 'Fresh styles arriving daily',
+    image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=300&fit=crop',
+    type: 'large'
   },
   {
-    id: 'new-arrivals',
-    title: 'New Arrivals',
-    subtitle: 'Fresh from the runway',
-    color: '#4ECDC4',
-    icon: 'sparkles-outline',
-    count: 18
+    id: 'summer-sale',
+    title: 'Summer sale',
+    subtitle: 'Up to 50% off',
+    image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=200&h=250&fit=crop',
+    type: 'small',
+    color: '#FF6B6B'
   },
   {
-    id: 'bestsellers',
-    title: 'Best Sellers',
-    subtitle: 'Customer favorites',
-    color: '#45B7D1',
-    icon: 'trophy-outline',
-    count: 32
+    id: 'mens-hoodies',
+    title: "Men's hoodies",
+    subtitle: 'Comfort meets style',
+    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&h=250&fit=crop',
+    type: 'medium'
   },
   {
-    id: 'sale',
-    title: 'On Sale',
-    subtitle: 'Up to 70% off',
-    color: '#FFA726',
-    icon: 'pricetag-outline',
-    count: 45
+    id: 'black-collection',
+    title: 'Black',
+    subtitle: 'Timeless elegance',
+    image: 'https://images.unsplash.com/photo-1494955464529-790512c65305?w=200&h=400&fit=crop',
+    type: 'tall'
   }
 ];
 
@@ -54,8 +52,8 @@ const featuredProducts = [
   {
     id: '1',
     name: 'Premium Silk Dress',
-    price: '$299.99',
-    originalPrice: '$450.00',
+    price: 299.99,
+    originalPrice: 450.00,
     image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=300&h=400&fit=crop',
     rating: 4.9,
     reviews: 342,
@@ -63,13 +61,14 @@ const featuredProducts = [
     discount: '33%',
     category: 'Dresses',
     isFavorite: false,
-    inStock: true
+    inStock: true,
+    sizes: ['XS', 'S', 'M', 'L', 'XL']
   },
   {
     id: '2',
     name: 'Designer Leather Jacket',
-    price: '$189.99',
-    originalPrice: '$280.00',
+    price: 189.99,
+    originalPrice: 280.00,
     image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=400&fit=crop',
     rating: 4.8,
     reviews: 256,
@@ -77,13 +76,14 @@ const featuredProducts = [
     discount: '32%',
     category: 'Outerwear',
     isFavorite: true,
-    inStock: true
+    inStock: true,
+    sizes: ['S', 'M', 'L', 'XL', 'XXL']
   },
   {
     id: '3',
     name: 'Athletic Performance Set',
-    price: '$79.99',
-    originalPrice: '$120.00',
+    price: 79.99,
+    originalPrice: 120.00,
     image: 'https://images.unsplash.com/photo-1506629905587-4b9d14f5e142?w=300&h=400&fit=crop',
     rating: 4.7,
     reviews: 189,
@@ -91,13 +91,14 @@ const featuredProducts = [
     discount: '33%',
     category: 'Activewear',
     isFavorite: false,
-    inStock: true
+    inStock: true,
+    sizes: ['XS', 'S', 'M', 'L']
   },
   {
     id: '4',
     name: 'Vintage Denim Collection',
-    price: '$129.99',
-    originalPrice: '$200.00',
+    price: 129.99,
+    originalPrice: 200.00,
     image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=300&h=400&fit=crop',
     rating: 4.6,
     reviews: 145,
@@ -105,13 +106,14 @@ const featuredProducts = [
     discount: '35%',
     category: 'Pants',
     isFavorite: false,
-    inStock: true
+    inStock: true,
+    sizes: ['26', '28', '30', '32', '34']
   },
   {
     id: '5',
     name: 'Limited Edition Sneakers',
-    price: '$159.99',
-    originalPrice: '$240.00',
+    price: 159.99,
+    originalPrice: 240.00,
     image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=300&h=400&fit=crop',
     rating: 4.9,
     reviews: 423,
@@ -119,13 +121,14 @@ const featuredProducts = [
     discount: '33%',
     category: 'Shoes',
     isFavorite: true,
-    inStock: true
+    inStock: true,
+    sizes: ['7', '8', '9', '10', '11']
   },
   {
     id: '6',
     name: 'Handcrafted Jewelry Set',
-    price: '$89.99',
-    originalPrice: '$140.00',
+    price: 89.99,
+    originalPrice: 140.00,
     image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&h=400&fit=crop',
     rating: 4.8,
     reviews: 98,
@@ -133,13 +136,16 @@ const featuredProducts = [
     discount: '36%',
     category: 'Accessories',
     isFavorite: false,
-    inStock: true
+    inStock: true,
+    sizes: ['One Size']
   }
 ];
 
 export default function FeaturedPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [favorites, setFavorites] = useState<string[]>(['2', '5']);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -154,6 +160,15 @@ export default function FeaturedPage() {
         ? prev.filter(id => id !== productId)
         : [...prev, productId]
     );
+  };
+
+  const handleAddToCart = (productId: string, size: string) => {
+    console.log(`Added product ${productId} with size ${size} to cart`);
+  };
+
+  const openSizeModal = (product: any) => {
+    setSelectedProduct(product);
+    setModalVisible(true);
   };
 
   const getBadgeColor = (badge: string) => {
@@ -216,21 +231,62 @@ export default function FeaturedPage() {
       {/* Featured Collections */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Collections</Text>
-        <View style={styles.collectionsGrid}>
-          {featuredCollections.map((collection) => (
+        <View style={styles.collectionsContainer}>
+          {/* New Collection - Large Card */}
+          <TouchableOpacity
+            style={styles.largeCollectionCard}
+            onPress={() => router.push('/featured/new-collection')}
+          >
+            <Image 
+              source={{ uri: featuredCollections[0].image }} 
+              style={styles.largeCollectionImage}
+            />
+            <View style={styles.largeCollectionOverlay}>
+              <Text style={styles.largeCollectionTitle}>{featuredCollections[0].title}</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Bottom Row */}
+          <View style={styles.bottomRow}>
+            {/* Left Column */}
+            <View style={styles.leftColumn}>
+              {/* Summer Sale */}
+              <TouchableOpacity
+                style={[styles.smallCollectionCard, { backgroundColor: featuredCollections[1].color }]}
+                onPress={() => router.push('/featured/summer-sale')}
+              >
+                <Text style={styles.smallCollectionTitle}>{featuredCollections[1].title}</Text>
+              </TouchableOpacity>
+
+              {/* Men's Hoodies */}
+              <TouchableOpacity
+                style={styles.mediumCollectionCard}
+                onPress={() => router.push('/featured/mens-hoodies')}
+              >
+                <Image 
+                  source={{ uri: featuredCollections[2].image }} 
+                  style={styles.mediumCollectionImage}
+                />
+                <View style={styles.mediumCollectionOverlay}>
+                  <Text style={styles.mediumCollectionTitle}>{featuredCollections[2].title}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            {/* Right Column - Black Collection */}
             <TouchableOpacity
-              key={collection.id}
-              style={[styles.collectionCard, { backgroundColor: collection.color }]}
-              onPress={() => router.push(`/featured/${collection.id}`)}
+              style={styles.tallCollectionCard}
+              onPress={() => router.push('/featured/black-collection')}
             >
-              <Ionicons name={collection.icon as any} size={32} color="#fff" />
-              <Text style={styles.collectionTitle}>{collection.title}</Text>
-              <Text style={styles.collectionSubtitle}>{collection.subtitle}</Text>
-              <View style={styles.collectionCount}>
-                <Text style={styles.countText}>{collection.count} items</Text>
+              <Image 
+                source={{ uri: featuredCollections[3].image }} 
+                style={styles.tallCollectionImage}
+              />
+              <View style={styles.tallCollectionOverlay}>
+                <Text style={styles.tallCollectionTitle}>{featuredCollections[3].title}</Text>
               </View>
             </TouchableOpacity>
-          ))}
+          </View>
         </View>
       </View>
 
@@ -287,12 +343,15 @@ export default function FeaturedPage() {
                 
                 {/* Price */}
                 <View style={styles.priceContainer}>
-                  <Text style={styles.productPrice}>{product.price}</Text>
-                  <Text style={styles.originalPrice}>{product.originalPrice}</Text>
+                  <Text style={styles.productPrice}>${product.price.toFixed(2)}</Text>
+                  <Text style={styles.originalPrice}>${product.originalPrice.toFixed(2)}</Text>
                 </View>
                 
                 {/* Add to Cart Button */}
-                <TouchableOpacity style={styles.addToCartButton}>
+                <TouchableOpacity 
+                  style={styles.addToCartButton}
+                  onPress={() => openSizeModal(product)}
+                >
                   <Ionicons name="bag-add-outline" size={18} color="#fff" />
                   <Text style={styles.addToCartText}>Add to Cart</Text>
                 </TouchableOpacity>
@@ -321,6 +380,14 @@ export default function FeaturedPage() {
           </View>
         </View>
       </View>
+
+      {/* Product Size Modal */}
+      <ProductSizeModal
+        visible={modalVisible}
+        product={selectedProduct}
+        onClose={() => setModalVisible(false)}
+        onAddToCart={handleAddToCart}
+      />
     </ScrollView>
   );
 }
@@ -376,48 +443,120 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  collectionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  collectionCard: {
-    width: (width - 45) / 2,
-    borderRadius: 20,
-    padding: 20,
-    alignItems: 'center',
+  collectionsContainer: {
     marginBottom: 15,
+  },
+  largeCollectionCard: {
+    width: '100%',
+    height: 200,
+    borderRadius: 20,
+    marginBottom: 15,
+    overflow: 'hidden',
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 6,
   },
-  collectionTitle: {
+  largeCollectionImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  largeCollectionOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    padding: 20,
+  },
+  largeCollectionTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  leftColumn: {
+    flex: 1,
+    marginRight: 10,
+  },
+  smallCollectionCard: {
+    height: 100,
+    borderRadius: 15,
+    marginBottom: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+  },
+  smallCollectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  mediumCollectionCard: {
+    height: 150,
+    borderRadius: 15,
+    overflow: 'hidden',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+  },
+  mediumCollectionImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  mediumCollectionOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    padding: 15,
+  },
+  mediumCollectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#fff',
-    marginTop: 10,
-    textAlign: 'center',
   },
-  collectionSubtitle: {
-    fontSize: 12,
+  tallCollectionCard: {
+    width: (width - 45) / 2,
+    height: 260,
+    borderRadius: 15,
+    overflow: 'hidden',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+  },
+  tallCollectionImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  tallCollectionOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    padding: 15,
+  },
+  tallCollectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
     color: '#fff',
-    opacity: 0.9,
-    marginTop: 4,
-    textAlign: 'center',
-  },
-  collectionCount: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginTop: 8,
-  },
-  countText: {
-    fontSize: 11,
-    color: '#fff',
-    fontWeight: '600',
   },
   productsGrid: {
     flexDirection: 'row',

@@ -2,15 +2,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
-    Dimensions,
-    Image,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Dimensions,
+  Image,
+  Modal,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { COLORS, SHADOWS, SIZES } from '../../../constants/theme';
 
@@ -46,11 +47,13 @@ export default function ProductDetailsPage() {
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [showSizeModal, setShowSizeModal] = useState(false);
 
   const product = productData; // In real app, fetch by id
 
   const handleSizeSelect = (size: string) => {
     setSelectedSize(size);
+    setShowSizeModal(false);
   };
 
   const handleColorSelect = (color: string) => {
@@ -59,7 +62,7 @@ export default function ProductDetailsPage() {
 
   const handleAddToCart = () => {
     if (!selectedSize) {
-      Alert.alert('Size Required', 'Please select a size before adding to cart');
+      setShowSizeModal(true);
       return;
     }
     
@@ -173,25 +176,18 @@ export default function ProductDetailsPage() {
           {/* Size Selector */}
           <View style={styles.selectorContainer}>
             <Text style={styles.selectorTitle}>Select size</Text>
-            <View style={styles.sizeContainer}>
-              {product.sizes.map((size) => (
-                <TouchableOpacity
-                  key={size}
-                  style={[
-                    styles.sizeButton,
-                    selectedSize === size && styles.sizeButtonSelected
-                  ]}
-                  onPress={() => handleSizeSelect(size)}
-                >
-                  <Text style={[
-                    styles.sizeText,
-                    selectedSize === size && styles.sizeTextSelected
-                  ]}>
-                    {size}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <TouchableOpacity 
+              style={styles.sizeSelectionButton}
+              onPress={() => setShowSizeModal(true)}
+            >
+              <Text style={[
+                styles.sizeSelectionButtonText,
+                selectedSize && { color: COLORS.textPrimary }
+              ]}>
+                {selectedSize || 'Choose size'}
+              </Text>
+              <Ionicons name="chevron-down" size={20} color={COLORS.textSecondary} />
+            </TouchableOpacity>
           </View>
 
           {/* Color Selector */}
@@ -225,6 +221,96 @@ export default function ProductDetailsPage() {
           <Text style={styles.addToCartText}>ADD TO CART</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Size Selection Modal */}
+      <Modal
+        visible={showSizeModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowSizeModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            {/* Modal Header */}
+            <View style={styles.modalHeader}>
+              <TouchableOpacity onPress={() => setShowSizeModal(false)}>
+                <Ionicons name="chevron-back" size={24} color={COLORS.textPrimary} />
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>{product.name}</Text>
+              <TouchableOpacity>
+                <Ionicons name="share-outline" size={24} color={COLORS.textPrimary} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Product Image and Info */}
+            <View style={styles.modalProductSection}>
+              <Image 
+                source={{ uri: product.images[selectedImageIndex] }}
+                style={styles.modalProductImage}
+              />
+              <View style={styles.modalProductInfo}>
+                <Text style={styles.modalBrandName}>{product.brand}</Text>
+                <View style={styles.modalRatingContainer}>
+                  <View style={styles.starsContainer}>
+                    {renderStars(product.rating)}
+                  </View>
+                  <Text style={styles.ratingText}>({product.reviews})</Text>
+                </View>
+                <Text style={styles.modalPrice}>${product.price}</Text>
+              </View>
+            </View>
+
+            {/* Size Selection */}
+            <View style={styles.sizeSelectionSection}>
+              <Text style={styles.selectSizeTitle}>Select size</Text>
+              <View style={styles.modalSizeContainer}>
+                {product.sizes.map((size) => (
+                  <TouchableOpacity
+                    key={size}
+                    style={[
+                      styles.modalSizeButton,
+                      selectedSize === size && styles.modalSizeButtonSelected
+                    ]}
+                    onPress={() => handleSizeSelect(size)}
+                  >
+                    <Text style={[
+                      styles.modalSizeText,
+                      selectedSize === size && styles.modalSizeTextSelected
+                    ]}>
+                      {size}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Size Info */}
+              <TouchableOpacity style={styles.sizeInfoButton}>
+                <Text style={styles.sizeInfoText}>Size info</Text>
+                <Ionicons name="chevron-forward" size={16} color={COLORS.textSecondary} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Modal Add to Cart Button */}
+            <View style={styles.modalBottomActions}>
+              <TouchableOpacity 
+                style={[
+                  styles.modalAddToCartButton,
+                  !selectedSize && styles.modalAddToCartButtonDisabled
+                ]}
+                onPress={() => {
+                  if (selectedSize) {
+                    setShowSizeModal(false);
+                    handleAddToCart();
+                  }
+                }}
+                disabled={!selectedSize}
+              >
+                <Text style={styles.modalAddToCartText}>ADD TO CART</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -354,6 +440,22 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     marginBottom: SIZES.md,
   },
+  sizeSelectionButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: COLORS.backgroundLight,
+    paddingHorizontal: SIZES.lg,
+    paddingVertical: SIZES.lg,
+    borderRadius: SIZES.radiusMd,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  sizeSelectionButtonText: {
+    fontSize: SIZES.textBase,
+    color: COLORS.textSecondary,
+    fontWeight: '500',
+  },
   sizeContainer: {
     flexDirection: 'row',
   },
@@ -410,6 +512,137 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   addToCartText: {
+    color: COLORS.background,
+    fontSize: SIZES.textLg,
+    fontWeight: 'bold',
+  },
+  
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: COLORS.background,
+    borderTopLeftRadius: SIZES.radiusXl,
+    borderTopRightRadius: SIZES.radiusXl,
+    paddingBottom: 40,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: SIZES.lg,
+    paddingHorizontal: SIZES.lg,
+    paddingBottom: SIZES.md,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.backgroundLight,
+  },
+  modalTitle: {
+    fontSize: SIZES.textLg,
+    fontWeight: 'bold',
+    color: COLORS.textPrimary,
+  },
+  modalProductSection: {
+    flexDirection: 'row',
+    paddingHorizontal: SIZES.lg,
+    paddingVertical: SIZES.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.backgroundLight,
+  },
+  modalProductImage: {
+    width: 80,
+    height: 100,
+    borderRadius: SIZES.radiusSm,
+    marginRight: SIZES.lg,
+  },
+  modalProductInfo: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  modalBrandName: {
+    fontSize: SIZES.textBase,
+    color: COLORS.textSecondary,
+    marginBottom: SIZES.xs,
+  },
+  modalRatingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SIZES.sm,
+  },
+  modalPrice: {
+    fontSize: SIZES.textXl,
+    fontWeight: 'bold',
+    color: COLORS.textPrimary,
+  },
+  sizeSelectionSection: {
+    paddingHorizontal: SIZES.lg,
+    paddingVertical: SIZES.lg,
+  },
+  selectSizeTitle: {
+    fontSize: SIZES.textLg,
+    fontWeight: 'bold',
+    color: COLORS.textPrimary,
+    marginBottom: SIZES.lg,
+  },
+  modalSizeContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: SIZES.lg,
+  },
+  modalSizeButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: COLORS.backgroundLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: SIZES.md,
+    marginBottom: SIZES.md,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  modalSizeButtonSelected: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  modalSizeText: {
+    fontSize: SIZES.textBase,
+    fontWeight: '600',
+    color: COLORS.textPrimary,
+  },
+  modalSizeTextSelected: {
+    color: COLORS.background,
+  },
+  sizeInfoButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: SIZES.md,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.backgroundLight,
+  },
+  sizeInfoText: {
+    fontSize: SIZES.textBase,
+    color: COLORS.textSecondary,
+  },
+  modalBottomActions: {
+    paddingHorizontal: SIZES.lg,
+    paddingTop: SIZES.lg,
+  },
+  modalAddToCartButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: SIZES.radiusFull,
+    paddingVertical: SIZES.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalAddToCartButtonDisabled: {
+    backgroundColor: COLORS.textLight,
+  },
+  modalAddToCartText: {
     color: COLORS.background,
     fontSize: SIZES.textLg,
     fontWeight: 'bold',

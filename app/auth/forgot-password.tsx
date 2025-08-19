@@ -2,16 +2,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { COLORS, SHADOWS, SIZES } from '../../constants/theme';
 import { authService } from '../../services/authService';
@@ -123,88 +121,73 @@ export default function ForgotPasswordScreen() {
   }
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
       
-      <View style={styles.content}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
-          </TouchableOpacity>
+      {/* Back Button */}
+      <View style={styles.header}>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Title */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Forgot password</Text>
         </View>
 
         {/* Form Content */}
         <View style={styles.formContainer}>
-          <Image 
-            source={require('../../assets/images/icon.png')} 
-            style={styles.logo}
-            resizeMode="contain"
-          />
-          
-          <Text style={styles.title}>Forgot Password?</Text>
           <Text style={styles.subtitle}>
-            Don't worry! Enter your email address and we'll send you instructions to reset your password.
+            Please, enter your email address. You will receive a link to create a new password via email.
           </Text>
 
           {/* Email Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            <View style={[styles.inputWrapper, error && styles.inputError]}>
-              <Ionicons 
-                name="mail-outline" 
-                size={20} 
-                color={error ? COLORS.error : COLORS.textLight} 
-                style={styles.inputIcon}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your email"
-                placeholderTextColor={COLORS.textLight}
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  if (error) setError('');
-                }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                autoFocus
-              />
-            </View>
-            {error && (
-              <Text style={styles.errorText}>{error}</Text>
+            <TextInput
+              style={[styles.input, error && styles.inputError]}
+              placeholder="Email"
+              placeholderTextColor={COLORS.textLight}
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                if (error) setError('');
+              }}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              autoFocus
+            />
+            {email !== '' && (
+              <TouchableOpacity style={styles.checkIcon}>
+                <Ionicons name="checkmark" size={20} color={COLORS.success} />
+              </TouchableOpacity>
             )}
           </View>
+          {error && (
+            <Text style={styles.errorText}>{error}</Text>
+          )}
 
-          {/* Reset Button */}
+          {/* Send Button */}
           <TouchableOpacity
-            style={[styles.resetButton, isLoading && styles.buttonDisabled]}
+            style={[styles.sendButton, isLoading && styles.buttonDisabled]}
             onPress={handleResetPassword}
             disabled={isLoading}
           >
-            <Text style={styles.resetButtonText}>
-              {isLoading ? 'Sending...' : 'Send Reset Instructions'}
+            <Text style={styles.sendButtonText}>
+              {isLoading ? 'SENDING...' : 'SEND'}
             </Text>
           </TouchableOpacity>
-
-          {/* Back to Login */}
-          <TouchableOpacity
-            style={styles.backToLoginButton}
-            onPress={() => router.push('/auth/login')}
-          >
-            <Ionicons name="arrow-back" size={16} color={COLORS.primary} />
-            <Text style={styles.backToLoginText}>Back to Sign In</Text>
-          </TouchableOpacity>
         </View>
-      </View>
-    </KeyboardAvoidingView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -213,114 +196,86 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: SIZES.lg,
-  },
   header: {
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingTop: 40,
+    paddingHorizontal: SIZES.lg,
+    paddingBottom: SIZES.md,
   },
   backButton: {
     alignSelf: 'flex-start',
     padding: SIZES.sm,
   },
-  formContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: 100,
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: SIZES.lg,
   },
-  logo: {
-    width: 80,
-    height: 80,
-    marginBottom: SIZES.xl,
+  titleContainer: {
+    alignItems: 'center',
+    marginBottom: 40,
   },
   title: {
-    fontSize: SIZES.text2xl,
+    fontSize: 34,
     fontWeight: 'bold',
     color: COLORS.textPrimary,
-    marginBottom: SIZES.md,
-    textAlign: 'center',
+  },
+  formContainer: {
+    flex: 1,
   },
   subtitle: {
     fontSize: SIZES.textBase,
     color: COLORS.textSecondary,
-    textAlign: 'center',
     lineHeight: 24,
-    marginBottom: SIZES.xl,
-    paddingHorizontal: SIZES.lg,
+    marginBottom: 30,
   },
   inputContainer: {
-    width: '100%',
-    marginBottom: SIZES.xl,
-  },
-  label: {
-    fontSize: SIZES.textBase,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-    marginBottom: SIZES.sm,
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.backgroundLight,
-    borderRadius: SIZES.radiusLg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    paddingHorizontal: SIZES.lg,
-    height: 56,
-  },
-  inputError: {
-    borderColor: COLORS.error,
-  },
-  inputIcon: {
-    marginRight: SIZES.md,
+    marginBottom: SIZES.lg,
+    position: 'relative',
   },
   input: {
-    flex: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
     fontSize: SIZES.textBase,
     color: COLORS.textPrimary,
-    height: '100%',
+    paddingVertical: SIZES.md,
+    paddingRight: 40,
+  },
+  inputError: {
+    borderBottomColor: COLORS.error,
+  },
+  checkIcon: {
+    position: 'absolute',
+    right: 0,
+    top: SIZES.md,
   },
   errorText: {
     fontSize: SIZES.textSm,
     color: COLORS.error,
     marginTop: SIZES.xs,
-    marginLeft: SIZES.sm,
   },
-  resetButton: {
+  sendButton: {
     backgroundColor: COLORS.primary,
-    borderRadius: SIZES.radiusFull,
-    height: 56,
+    borderRadius: 25,
+    height: 48,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
-    marginBottom: SIZES.xl,
+    marginTop: 30,
     ...SHADOWS.medium,
   },
   buttonDisabled: {
     backgroundColor: COLORS.textLight,
   },
-  resetButtonText: {
-    fontSize: SIZES.textLg,
+  sendButtonText: {
+    fontSize: SIZES.textBase,
     fontWeight: 'bold',
     color: COLORS.background,
-  },
-  backToLoginButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: SIZES.md,
-  },
-  backToLoginText: {
-    fontSize: SIZES.textBase,
-    color: COLORS.primary,
-    fontWeight: '500',
-    marginLeft: SIZES.sm,
+    letterSpacing: 1,
   },
   
-  // Success Styles
+  // Success Styles (keeping existing ones)
+  content: {
+    flex: 1,
+    paddingHorizontal: SIZES.lg,
+  },
   successContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -379,5 +334,17 @@ const styles = StyleSheet.create({
     fontSize: SIZES.textLg,
     fontWeight: '600',
     color: COLORS.primary,
+  },
+  backToLoginButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: SIZES.md,
+  },
+  backToLoginText: {
+    fontSize: SIZES.textBase,
+    color: COLORS.primary,
+    fontWeight: '500',
+    marginLeft: SIZES.sm,
   },
 });
