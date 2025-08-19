@@ -1,12 +1,18 @@
-import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
-import { View, TouchableOpacity } from "react-native";
-import { Entypo } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
+import { ErrorBoundary } from "../components/ErrorBoundary";
+import { AuthProvider } from "../context/AuthContext";
+
+// Prevent splash screen from auto-hiding
+SplashScreen.preventAutoHideAsync();
 
 // Efek samping untuk splash screen harus di dalam useEffect
 export default function RootLayout() {
+  const [appIsReady, setAppIsReady] = useState(false);
+  
   const [loaded, error] = useFonts({
     // 5 Font Statis
     MontserratItalic: require("../assets/fonts/Montserrat-Italic-VariableFont_wght.ttf"),
@@ -26,20 +32,47 @@ export default function RootLayout() {
   useEffect(() => {
     async function prepare() {
       try {
-        await SplashScreen.preventAutoHideAsync();
+        // Pre-load fonts, make any API calls you need to do here
+        console.log('Fonts loaded:', loaded);
+        console.log('Font error:', error);
+        
+        if (loaded || error) {
+          // If fonts loaded or there's an error, the app is ready
+          setAppIsReady(true);
+        }
       } catch (e) {
-        console.warn(e);
-      }
-
-      if (loaded && !error) {
-        await SplashScreen.hideAsync();
+        console.warn('Error during app preparation:', e);
+        // Even if there's an error, make the app ready to prevent infinite loading
+        setAppIsReady(true);
       }
     }
 
     prepare();
   }, [loaded, error]);
 
-  if (!loaded && !error) return null;
+  useEffect(() => {
+    const hideSplashScreen = async () => {
+      if (appIsReady) {
+        try {
+          await SplashScreen.hideAsync();
+        } catch (e) {
+          console.warn('Error hiding splash screen:', e);
+        }
+      }
+    };
+
+    hideSplashScreen();
+  }, [appIsReady]);
+
+  if (!appIsReady) {
+    // Show a simple loading screen if app is not ready
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+        <ActivityIndicator size="large" color="#FF6B6B" />
+        <Text style={{ marginTop: 20, fontSize: 16, color: '#666' }}>Loading...</Text>
+      </View>
+    );
+  }
 
   // return (
   //   <Stack
@@ -69,13 +102,29 @@ export default function RootLayout() {
   // );
 
   return(
-    <Stack>
-      <Stack.Screen
-        name= "(tabs)"
-        options={{
-          headerShown: false
-        }}
-      />
-    </Stack>
+    <AuthProvider>
+      <ErrorBoundary>
+        <Stack>
+          <Stack.Screen
+            name="index"
+            options={{
+              headerShown: false
+            }}
+          />
+          <Stack.Screen
+            name="auth"
+            options={{
+              headerShown: false
+            }}
+          />
+          <Stack.Screen
+            name= "(tabs)"
+            options={{
+              headerShown: false
+            }}
+          />
+        </Stack>
+      </ErrorBoundary>
+    </AuthProvider>
   )
 }

@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     marginBottom: 16,
     textAlign: 'center',
+    // @ts-ignore - textShadow properties are deprecated but still functional
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
@@ -67,10 +68,7 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     elevation: 8,
-    shadowColor: '#ff4757',
-    shadowOpacity: 0.25,
-    shadowOffset: { width: 0, height: 6 },
-    shadowRadius: 12,
+    boxShadow: '0 6px 12px rgba(255, 71, 87, 0.25)',
   },
   profileImage: {
     width: 80,

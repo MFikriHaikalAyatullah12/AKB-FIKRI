@@ -1,5 +1,5 @@
 # AKB-FIKRI Fashion Store App
-
+# cd /workspaces/AKB-FIKRI && npx expo start --clear --tunnel
 A modern React Native e-commerce mobile application built with Expo Router, featuring a comprehensive fashion shopping experience.
 
 ## � Features

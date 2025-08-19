@@ -2,16 +2,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-  Alert,
-  Dimensions,
-  FlatList,
-  RefreshControl,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    Alert,
+    Dimensions,
+    FlatList,
+    RefreshControl,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { CategoryCard } from '../../components/CategoryCard';
 import { LoadingScreen } from '../../components/LoadingScreen';
@@ -101,6 +102,7 @@ const categories = [
 ];
 
 export default function HomePage() {
+  const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -157,6 +159,14 @@ export default function HomePage() {
     }, 2000);
   };
 
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/(tabs)/search?q=${encodeURIComponent(searchQuery)}`);
+    } else {
+      Alert.alert('Search', 'Please enter a search term');
+    }
+  };
+
   const handleProductPress = (productId: string) => {
     router.push(`/(tabs)/user/${productId}`);
   };
@@ -209,7 +219,7 @@ export default function HomePage() {
           
           <TouchableOpacity 
             style={styles.cartButton}
-            onPress={() => router.push('/(tabs)/cart-new')}
+            onPress={() => router.push('/(tabs)/cart')}
           >
             <Ionicons name="bag-outline" size={24} color={COLORS.textPrimary} />
           </TouchableOpacity>
@@ -217,14 +227,16 @@ export default function HomePage() {
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <TouchableOpacity 
-            style={styles.searchBar}
-            onPress={() => router.push('/(tabs)/search')}
-            activeOpacity={0.7}
-          >
+          <View style={styles.searchBar}>
             <Ionicons name="search" size={20} color={COLORS.textLight} />
-            <Text style={styles.searchPlaceholder}>Search for products...</Text>
-          </TouchableOpacity>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search for products..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              onSubmitEditing={handleSearch}
+            />
+          </View>
           <TouchableOpacity style={styles.filterButton}>
             <Ionicons name="options-outline" size={20} color={COLORS.textPrimary} />
           </TouchableOpacity>
@@ -238,44 +250,6 @@ export default function HomePage() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {/* Quick Access Section */}
-        <View style={styles.quickAccessContainer}>
-          <Text style={styles.quickAccessTitle}>Quick Access</Text>
-          <View style={styles.quickAccessGrid}>
-            <TouchableOpacity 
-              style={styles.quickAccessButton}
-              onPress={() => Alert.alert('Search', 'Use the search bar above to find products!')}
-            >
-              <Ionicons name="search" size={24} color={COLORS.primary} />
-              <Text style={styles.quickAccessText}>Search</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={styles.quickAccessButton}
-              onPress={() => Alert.alert('Trending', 'Check Featured section for trending products!')}
-            >
-              <Ionicons name="trending-up" size={24} color={COLORS.primary} />
-              <Text style={styles.quickAccessText}>Trending</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={styles.quickAccessButton}
-              onPress={() => Alert.alert('Reviews', 'Product reviews feature coming soon!')}
-            >
-              <Ionicons name="star" size={24} color={COLORS.primary} />
-              <Text style={styles.quickAccessText}>Reviews</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={styles.quickAccessButton}
-              onPress={() => router.push('/(tabs)/about')}
-            >
-              <Ionicons name="grid" size={24} color={COLORS.primary} />
-              <Text style={styles.quickAccessText}>Categories</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
         {/* Sale Banner */}
         <SaleBanner
           title="Fashion"
@@ -379,12 +353,6 @@ const styles = StyleSheet.create({
     fontSize: SIZES.textBase,
     color: COLORS.textPrimary,
   },
-  searchPlaceholder: {
-    flex: 1,
-    marginLeft: SIZES.md,
-    fontSize: SIZES.textBase,
-    color: COLORS.textLight,
-  },
   filterButton: {
     backgroundColor: COLORS.backgroundLight,
     padding: SIZES.md,
@@ -423,41 +391,6 @@ const styles = StyleSheet.create({
   },
   categoryRow: {
     justifyContent: 'space-between',
-  },
-  quickAccessContainer: {
-    marginHorizontal: SIZES.lg,
-    marginVertical: SIZES.md,
-    backgroundColor: COLORS.backgroundLight,
-    borderRadius: SIZES.radiusLg,
-    padding: SIZES.lg,
-  },
-  quickAccessTitle: {
-    fontSize: SIZES.textLg,
-    fontWeight: 'bold',
-    color: COLORS.textPrimary,
-    marginBottom: SIZES.md,
-    textAlign: 'center',
-  },
-  quickAccessGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  quickAccessButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLORS.background,
-    borderRadius: SIZES.radiusMd,
-    padding: SIZES.md,
-    minWidth: 70,
-    ...SHADOWS.small,
-  },
-  quickAccessText: {
-    fontSize: SIZES.textSm,
-    color: COLORS.textSecondary,
-    fontWeight: '500',
-    marginTop: SIZES.xs,
-    textAlign: 'center',
   },
   errorContainer: {
     flex: 1,

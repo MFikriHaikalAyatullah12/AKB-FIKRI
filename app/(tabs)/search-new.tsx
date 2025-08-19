@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  FlatList,
-  StatusBar,
-  Dimensions,
-  Modal,
-} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SIZES, SHADOWS } from '../../constants/theme';
+import { useEffect, useState } from 'react';
+import {
+    Dimensions,
+    FlatList,
+    Modal,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import ProductCard from '../../components/ProductCard';
+import { COLORS, SIZES } from '../../constants/theme';
 
 const { width } = Dimensions.get('window');
 

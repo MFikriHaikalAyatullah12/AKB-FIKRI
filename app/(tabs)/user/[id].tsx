@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import {
     Alert,
     Dimensions,
@@ -10,80 +10,34 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View
+    View,
 } from 'react-native';
+import { COLORS, SHADOWS, SIZES } from '../../../constants/theme';
 
 const { width, height } = Dimensions.get('window');
 
-// Enhanced product data
-const products = [
-  {
-    id: '1',
-    name: 'High-Waisted Trousers',
-    price: 89.99,
-    originalPrice: 129.99,
-    images: [
-      'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=500&fit=crop',
-      'https://images.unsplash.com/photo-1594633313515-8ad17c4c4da9?w=400&h=500&fit=crop',
-      'https://images.unsplash.com/photo-1594633313885-c4618c17c9c4?w=400&h=500&fit=crop'
-    ],
-    description: 'Elegant high-waisted trousers perfect for both casual and formal occasions. Made from premium blend fabric with excellent fit and comfort.',
-    rating: 4.5,
-    reviews: 128,
-    category: 'Pants',
-    brand: 'Fashion Elite',
-    material: '65% Cotton, 30% Polyester, 5% Elastane',
-    sizes: ['XS', 'S', 'M', 'L', 'XL'],
-    colors: ['Navy Blue', 'Black', 'Charcoal Grey', 'Khaki'],
-    features: ['High-waisted design', 'Comfortable fit', 'Wrinkle resistant', 'Machine washable'],
-    inStock: true,
-    fastShipping: true,
-    returnPolicy: '30-day return'
-  },
-  {
-    id: '2',
-    name: 'Summer Collection Dress',
-    price: 129.99,
-    originalPrice: 199.99,
-    images: [
-      'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=500&fit=crop',
-      'https://images.unsplash.com/photo-1515372039848-c3b08e2df2b0?w=400&h=500&fit=crop'
-    ],
-    description: 'Beautiful floral dress from our summer collection. Lightweight and breathable fabric perfect for warm weather.',
-    rating: 4.8,
-    reviews: 256,
-    category: 'Dresses',
-    brand: 'Summer Styles',
-    material: '100% Cotton',
-    sizes: ['XS', 'S', 'M', 'L', 'XL'],
-    colors: ['Floral Print', 'Solid Navy', 'Coral Pink'],
-    features: ['Lightweight fabric', 'Floral pattern', 'Midi length', 'Side pockets'],
-    inStock: true,
-    fastShipping: true,
-    returnPolicy: '30-day return'
-  },
-  {
-    id: '3',
-    name: 'Casual White Shirt',
-    price: 49.99,
-    originalPrice: 69.99,
-    images: [
-      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop'
-    ],
-    description: 'Classic white shirt that goes with everything. Premium cotton fabric with a comfortable regular fit.',
-    rating: 4.3,
-    reviews: 89,
-    category: 'Tops',
-    brand: 'Classic Collection',
-    material: '100% Cotton',
-    sizes: ['XS', 'S', 'M', 'L', 'XL'],
-    colors: ['White', 'Light Blue', 'Pink'],
-    features: ['Classic fit', 'Button-down collar', 'Long sleeves', 'Chest pocket'],
-    inStock: true,
-    fastShipping: false,
-    returnPolicy: '30-day return'
-  }
-];
+const productData = {
+  id: '1',
+  name: 'Short dress',
+  brand: 'H&M',
+  price: 19.99,
+  originalPrice: 29.99,
+  description: 'Short dress in soft woven fabric with decorative buttons down the front and a tie belt.',
+  images: [
+    'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=600&fit=crop',
+  ],
+  sizes: ['XS', 'S', 'M', 'L', 'XL'],
+  colors: [
+    { name: 'Black', hex: '#000000' },
+    { name: 'White', hex: '#FFFFFF' },
+    { name: 'Navy', hex: '#001f3f' },
+  ],
+  rating: 4.5,
+  reviews: 128,
+  inStock: true,
+};
 
 export default function ProductDetailsPage() {
   const { id } = useLocalSearchParams();
@@ -93,24 +47,31 @@ export default function ProductDetailsPage() {
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const product = useMemo(() => products.find((product) => product.id === id), [id]);
+  const product = productData; // In real app, fetch by id
 
-  if (!product) {
-    return (
-      <View style={styles.center}>
-        <Ionicons name="close-circle-outline" size={64} color="#ccc" />
-        <Text style={styles.notFoundText}>Product not found</Text>
-        <TouchableOpacity 
-          style={styles.backToHomeButton}
-          onPress={() => router.push('/')}
-        >
-          <Text style={styles.backToHomeText}>Back to Home</Text>
-        </TouchableOpacity>
-      </View>
+  const handleSizeSelect = (size: string) => {
+    setSelectedSize(size);
+  };
+
+  const handleColorSelect = (color: string) => {
+    setSelectedColor(color);
+  };
+
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      Alert.alert('Size Required', 'Please select a size before adding to cart');
+      return;
+    }
+    
+    Alert.alert(
+      'Added to Cart!',
+      `${product.name} has been added to your cart.\nSize: ${selectedSize}\nColor: ${selectedColor || 'Default'}\nQuantity: ${quantity}`,
+      [
+        { text: 'Continue Shopping', style: 'cancel' },
+        { text: 'View Cart', onPress: () => router.push('/(tabs)/cart') }
+      ]
     );
-  }
-
-  const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+  };
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -133,248 +94,125 @@ export default function ProductDetailsPage() {
     return stars;
   };
 
-  const addToCart = () => {
-    if (!selectedSize) {
-      Alert.alert('Size Required', 'Please select a size before adding to cart');
-      return;
-    }
-    if (!selectedColor) {
-      Alert.alert('Color Required', 'Please select a color before adding to cart');
-      return;
-    }
-    
-    Alert.alert(
-      'Added to Cart!',
-      `${product.name} has been added to your cart.\nSize: ${selectedSize}\nColor: ${selectedColor}\nQuantity: ${quantity}`,
-      [
-        { text: 'Continue Shopping', style: 'cancel' },
-        { text: 'View Cart', onPress: () => router.push('/cart') }
-      ]
-    );
-  };
-
-  const buyNow = () => {
-    if (!selectedSize || !selectedColor) {
-      Alert.alert('Selection Required', 'Please select size and color first');
-      return;
-    }
-    
-    Alert.alert(
-      'Quick Checkout',
-      `Proceed to checkout with:\n${product.name}\nSize: ${selectedSize}\nColor: ${selectedColor}\nTotal: $${(product.price * quantity).toFixed(2)}`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Checkout', onPress: () => Alert.alert('Success', 'Redirecting to payment...') }
-      ]
-    );
-  };
-
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#FF6B6B" />
+      <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
       
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => router.back()} 
-          style={styles.headerButton}
-        >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
         
-        <Text style={styles.headerTitle}>Product Details</Text>
-        
-        <TouchableOpacity 
-          style={styles.headerButton}
-          onPress={() => setIsFavorite(!isFavorite)}
-        >
-          <Ionicons 
-            name={isFavorite ? "heart" : "heart-outline"} 
-            size={24} 
-            color={isFavorite ? "#FFD700" : "#fff"} 
-          />
+        <TouchableOpacity style={styles.shareButton}>
+          <Ionicons name="share-outline" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Product Images */}
+        {/* Product Image */}
         <View style={styles.imageContainer}>
           <Image 
             source={{ uri: product.images[selectedImageIndex] }} 
-            style={styles.mainImage}
-            resizeMode="cover"
+            style={styles.productImage}
           />
           
-          {discount > 0 && (
-            <View style={styles.discountBadge}>
-              <Text style={styles.discountText}>-{discount}%</Text>
-            </View>
-          )}
-          
-          {product.images.length > 1 && (
-            <ScrollView 
-              horizontal 
-              style={styles.thumbnailContainer}
-              showsHorizontalScrollIndicator={false}
+          {/* Favorite Button */}
+          <TouchableOpacity 
+            style={styles.favoriteButton}
+            onPress={() => setIsFavorite(!isFavorite)}
+          >
+            <Ionicons 
+              name={isFavorite ? "heart" : "heart-outline"} 
+              size={24} 
+              color={isFavorite ? COLORS.primary : COLORS.textPrimary} 
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* Image Thumbnails */}
+        <View style={styles.thumbnailContainer}>
+          {product.images.map((image, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.thumbnail,
+                selectedImageIndex === index && styles.thumbnailSelected
+              ]}
+              onPress={() => setSelectedImageIndex(index)}
             >
-              {product.images.map((image, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => setSelectedImageIndex(index)}
-                  style={[
-                    styles.thumbnail,
-                    selectedImageIndex === index && styles.selectedThumbnail
-                  ]}
-                >
-                  <Image source={{ uri: image }} style={styles.thumbnailImage} />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          )}
+              <Image source={{ uri: image }} style={styles.thumbnailImage} />
+            </TouchableOpacity>
+          ))}
         </View>
 
         {/* Product Info */}
         <View style={styles.productInfo}>
-          <Text style={styles.brandName}>{product.brand}</Text>
           <Text style={styles.productName}>{product.name}</Text>
+          <Text style={styles.brandName}>{product.brand}</Text>
           
           {/* Rating */}
           <View style={styles.ratingContainer}>
             <View style={styles.starsContainer}>
               {renderStars(product.rating)}
             </View>
-            <Text style={styles.ratingText}>{product.rating}</Text>
-            <Text style={styles.reviewsText}>({product.reviews} reviews)</Text>
+            <Text style={styles.ratingText}>({product.reviews})</Text>
           </View>
-          
+
           {/* Price */}
           <View style={styles.priceContainer}>
-            <Text style={styles.currentPrice}>${product.price.toFixed(2)}</Text>
+            <Text style={styles.price}>${product.price}</Text>
             {product.originalPrice && (
-              <Text style={styles.originalPrice}>${product.originalPrice.toFixed(2)}</Text>
+              <Text style={styles.originalPrice}>${product.originalPrice}</Text>
             )}
           </View>
-          
+
           {/* Description */}
           <Text style={styles.description}>{product.description}</Text>
-          
-          {/* Features */}
-          <View style={styles.featuresContainer}>
-            <Text style={styles.featuresTitle}>Features:</Text>
-            {product.features.map((feature, index) => (
-              <View key={index} style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" />
-                <Text style={styles.featureText}>{feature}</Text>
-              </View>
-            ))}
+
+          {/* Size Selector */}
+          <View style={styles.selectorContainer}>
+            <Text style={styles.selectorTitle}>Select size</Text>
+            <View style={styles.sizeContainer}>
+              {product.sizes.map((size) => (
+                <TouchableOpacity
+                  key={size}
+                  style={[
+                    styles.sizeButton,
+                    selectedSize === size && styles.sizeButtonSelected
+                  ]}
+                  onPress={() => handleSizeSelect(size)}
+                >
+                  <Text style={[
+                    styles.sizeText,
+                    selectedSize === size && styles.sizeTextSelected
+                  ]}>
+                    {size}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-          
-          {/* Size Selection */}
-          <View style={styles.selectionContainer}>
-            <Text style={styles.selectionTitle}>Size:</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.optionsContainer}>
-                {product.sizes.map((size) => (
-                  <TouchableOpacity
-                    key={size}
-                    style={[
-                      styles.optionButton,
-                      selectedSize === size && styles.selectedOption
-                    ]}
-                    onPress={() => setSelectedSize(size)}
-                  >
-                    <Text style={[
-                      styles.optionText,
-                      selectedSize === size && styles.selectedOptionText
-                    ]}>
-                      {size}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </ScrollView>
-          </View>
-          
-          {/* Color Selection */}
-          <View style={styles.selectionContainer}>
-            <Text style={styles.selectionTitle}>Color:</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.optionsContainer}>
+
+          {/* Color Selector */}
+          {product.colors && (
+            <View style={styles.selectorContainer}>
+              <Text style={styles.selectorTitle}>Size info</Text>
+              <View style={styles.colorContainer}>
                 {product.colors.map((color) => (
                   <TouchableOpacity
-                    key={color}
+                    key={color.name}
                     style={[
-                      styles.optionButton,
-                      selectedColor === color && styles.selectedOption
+                      styles.colorButton,
+                      { backgroundColor: color.hex },
+                      selectedColor === color.name && styles.colorButtonSelected
                     ]}
-                    onPress={() => setSelectedColor(color)}
-                  >
-                    <Text style={[
-                      styles.optionText,
-                      selectedColor === color && styles.selectedOptionText
-                    ]}>
-                      {color}
-                    </Text>
-                  </TouchableOpacity>
+                    onPress={() => handleColorSelect(color.name)}
+                  />
                 ))}
               </View>
-            </ScrollView>
-          </View>
-          
-          {/* Quantity */}
-          <View style={styles.quantityContainer}>
-            <Text style={styles.selectionTitle}>Quantity:</Text>
-            <View style={styles.quantityControls}>
-              <TouchableOpacity 
-                style={styles.quantityButton}
-                onPress={() => setQuantity(Math.max(1, quantity - 1))}
-              >
-                <Ionicons name="remove" size={20} color="#666" />
-              </TouchableOpacity>
-              <Text style={styles.quantityText}>{quantity}</Text>
-              <TouchableOpacity 
-                style={styles.quantityButton}
-                onPress={() => setQuantity(quantity + 1)}
-              >
-                <Ionicons name="add" size={20} color="#666" />
-              </TouchableOpacity>
             </View>
-          </View>
-          
-          {/* Product Details */}
-          <View style={styles.detailsContainer}>
-            <Text style={styles.detailsTitle}>Product Details</Text>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Material:</Text>
-              <Text style={styles.detailValue}>{product.material}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Category:</Text>
-              <Text style={styles.detailValue}>{product.category}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Return Policy:</Text>
-              <Text style={styles.detailValue}>{product.returnPolicy}</Text>
-            </View>
-          </View>
-          
-          {/* Service Features */}
-          <View style={styles.servicesContainer}>
-            <View style={styles.serviceItem}>
-              <Ionicons name="flash" size={20} color="#4CAF50" />
-              <Text style={styles.serviceText}>
-                {product.fastShipping ? 'Fast Shipping' : 'Standard Shipping'}
-              </Text>
-            </View>
-            <View style={styles.serviceItem}>
-              <Ionicons name="shield-checkmark" size={20} color="#4CAF50" />
-              <Text style={styles.serviceText}>Secure Payment</Text>
-            </View>
-            <View style={styles.serviceItem}>
-              <Ionicons name="return-up-back" size={20} color="#4CAF50" />
-              <Text style={styles.serviceText}>Easy Returns</Text>
-            </View>
-          </View>
+          )}
         </View>
       </ScrollView>
 
@@ -382,18 +220,9 @@ export default function ProductDetailsPage() {
       <View style={styles.bottomActions}>
         <TouchableOpacity 
           style={styles.addToCartButton}
-          onPress={addToCart}
+          onPress={handleAddToCart}
         >
-          <Ionicons name="bag-add-outline" size={20} color="#fff" />
-          <Text style={styles.addToCartText}>Add to Cart</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.buyNowButton}
-          onPress={buyNow}
-        >
-          <Ionicons name="card-outline" size={20} color="#fff" />
-          <Text style={styles.buyNowText}>Buy Now</Text>
+          <Text style={styles.addToCartText}>ADD TO CART</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -403,310 +232,186 @@ export default function ProductDetailsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: COLORS.background,
   },
   header: {
-    backgroundColor: '#FF6B6B',
-    paddingTop: 50,
-    paddingBottom: 15,
-    paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingTop: 50,
+    paddingHorizontal: SIZES.lg,
+    paddingBottom: SIZES.lg,
+    backgroundColor: COLORS.background,
   },
-  headerButton: {
-    padding: 5,
+  backButton: {
+    padding: SIZES.sm,
   },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+  shareButton: {
+    padding: SIZES.sm,
   },
   content: {
     flex: 1,
   },
-  center: {
-    flex: 1,
+  imageContainer: {
+    position: 'relative',
+    height: height * 0.5,
+    backgroundColor: COLORS.backgroundLight,
+  },
+  productImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  favoriteButton: {
+    position: 'absolute',
+    top: SIZES.xl,
+    right: SIZES.xl,
+    backgroundColor: COLORS.background,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 40,
-  },
-  notFoundText: {
-    fontSize: 18,
-    color: '#666',
-    marginTop: 20,
-    marginBottom: 30,
-  },
-  backToHomeButton: {
-    backgroundColor: '#FF6B6B',
-    paddingHorizontal: 25,
-    paddingVertical: 12,
-    borderRadius: 25,
-  },
-  backToHomeText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  imageContainer: {
-    backgroundColor: '#fff',
-    position: 'relative',
-  },
-  mainImage: {
-    width: width,
-    height: height * 0.4,
-  },
-  discountBadge: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    backgroundColor: '#FF6B6B',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
-  },
-  discountText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
+    ...SHADOWS.medium,
   },
   thumbnailContainer: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    flexDirection: 'row',
+    paddingHorizontal: SIZES.lg,
+    paddingVertical: SIZES.lg,
   },
   thumbnail: {
-    marginRight: 10,
-    borderRadius: 8,
+    width: 60,
+    height: 80,
+    borderRadius: SIZES.radiusSm,
+    marginRight: SIZES.md,
     overflow: 'hidden',
     borderWidth: 2,
     borderColor: 'transparent',
   },
-  selectedThumbnail: {
-    borderColor: '#FF6B6B',
+  thumbnailSelected: {
+    borderColor: COLORS.primary,
   },
   thumbnailImage: {
-    width: 60,
-    height: 60,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   productInfo: {
-    backgroundColor: '#fff',
-    marginTop: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  brandName: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 5,
+    padding: SIZES.lg,
   },
   productName: {
-    fontSize: 24,
+    fontSize: SIZES.text3xl,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
+    color: COLORS.textPrimary,
+    marginBottom: SIZES.xs,
+  },
+  brandName: {
+    fontSize: SIZES.textLg,
+    color: COLORS.textSecondary,
+    marginBottom: SIZES.md,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: SIZES.lg,
   },
   starsContainer: {
     flexDirection: 'row',
-    marginRight: 8,
+    marginRight: SIZES.sm,
   },
   ratingText: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '600',
-    marginRight: 5,
-  },
-  reviewsText: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: SIZES.textBase,
+    color: COLORS.textSecondary,
   },
   priceContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: SIZES.lg,
   },
-  currentPrice: {
-    fontSize: 28,
+  price: {
+    fontSize: SIZES.text3xl,
     fontWeight: 'bold',
-    color: '#FF6B6B',
-    marginRight: 10,
+    color: COLORS.primary,
+    marginRight: SIZES.md,
   },
   originalPrice: {
-    fontSize: 18,
-    color: '#999',
+    fontSize: SIZES.textLg,
+    color: COLORS.textLight,
     textDecorationLine: 'line-through',
   },
   description: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: SIZES.textBase,
+    color: COLORS.textSecondary,
     lineHeight: 24,
-    marginBottom: 20,
+    marginBottom: SIZES.xl,
   },
-  featuresContainer: {
-    marginBottom: 25,
+  selectorContainer: {
+    marginBottom: SIZES.xl,
   },
-  featuresTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
+  selectorTitle: {
+    fontSize: SIZES.textLg,
+    fontWeight: '600',
+    color: COLORS.textPrimary,
+    marginBottom: SIZES.md,
   },
-  featureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  featureText: {
-    fontSize: 15,
-    color: '#666',
-    marginLeft: 8,
-  },
-  selectionContainer: {
-    marginBottom: 20,
-  },
-  selectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-  },
-  optionsContainer: {
+  sizeContainer: {
     flexDirection: 'row',
   },
-  optionButton: {
-    backgroundColor: '#f8f9fa',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 20,
-    marginRight: 10,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  selectedOption: {
-    backgroundColor: '#FF6B6B',
-    borderColor: '#FF6B6B',
-  },
-  optionText: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '500',
-  },
-  selectedOptionText: {
-    color: '#fff',
-  },
-  quantityContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 25,
-  },
-  quantityControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
+  sizeButton: {
+    width: 50,
+    height: 50,
     borderRadius: 25,
-    paddingHorizontal: 5,
+    backgroundColor: COLORS.backgroundLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: SIZES.md,
+    borderWidth: 2,
+    borderColor: 'transparent',
   },
-  quantityButton: {
-    backgroundColor: '#fff',
+  sizeButtonSelected: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  sizeText: {
+    fontSize: SIZES.textBase,
+    fontWeight: '600',
+    color: COLORS.textPrimary,
+  },
+  sizeTextSelected: {
+    color: COLORS.background,
+  },
+  colorContainer: {
+    flexDirection: 'row',
+  },
+  colorButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 1,
+    marginRight: SIZES.md,
+    borderWidth: 3,
+    borderColor: 'transparent',
   },
-  quantityText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginHorizontal: 20,
-    minWidth: 30,
-    textAlign: 'center',
-  },
-  detailsContainer: {
-    marginBottom: 25,
-  },
-  detailsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  detailLabel: {
-    fontSize: 15,
-    color: '#666',
-    fontWeight: '500',
-  },
-  detailValue: {
-    fontSize: 15,
-    color: '#333',
-    fontWeight: '500',
-    flex: 1,
-    textAlign: 'right',
-  },
-  servicesContainer: {
-    marginBottom: 20,
-  },
-  serviceItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  serviceText: {
-    fontSize: 15,
-    color: '#666',
-    marginLeft: 10,
-    fontWeight: '500',
+  colorButtonSelected: {
+    borderColor: COLORS.primary,
   },
   bottomActions: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+    backgroundColor: COLORS.background,
+    paddingHorizontal: SIZES.lg,
+    paddingVertical: SIZES.lg,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-    flexDirection: 'row',
-    gap: 15,
+    borderTopColor: COLORS.border,
+    ...SHADOWS.large,
   },
   addToCartButton: {
-    flex: 1,
-    backgroundColor: '#4ECDC4',
-    flexDirection: 'row',
+    backgroundColor: COLORS.primary,
+    borderRadius: SIZES.radiusFull,
+    paddingVertical: SIZES.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 15,
-    borderRadius: 25,
-    elevation: 2,
   },
   addToCartText: {
-    color: '#fff',
-    fontSize: 16,
+    color: COLORS.background,
+    fontSize: SIZES.textLg,
     fontWeight: 'bold',
-    marginLeft: 8,
-  },
-  buyNowButton: {
-    flex: 1,
-    backgroundColor: '#FF6B6B',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 15,
-    borderRadius: 25,
-    elevation: 2,
-  },
-  buyNowText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 8,
   },
 });

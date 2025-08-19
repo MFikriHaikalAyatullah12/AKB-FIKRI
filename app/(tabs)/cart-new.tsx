@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  StatusBar,
-  Alert,
-} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { COLORS, SIZES, SHADOWS } from '../../constants/theme';
+import { useState } from 'react';
+import {
+  Alert,
+  Image,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { COLORS, SHADOWS, SIZES } from '../../constants/theme';
 
 interface CartItem {
   id: string;
@@ -131,7 +131,12 @@ export default function CartPage() {
       return;
     }
     
-    router.push('/checkout');
+    // TODO: Create checkout page or use existing cart flow
+    Alert.alert(
+      'Checkout', 
+      'Checkout functionality will be implemented here.',
+      [{ text: 'OK' }]
+    );
   };
 
   const CartItemComponent = ({ item }: { item: CartItem }) => (
@@ -463,11 +468,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: COLORS.success + '10',
+    backgroundColor: COLORS.accent + '10',
     borderRadius: SIZES.radiusSm,
     padding: SIZES.lg,
     borderWidth: 1,
-    borderColor: COLORS.success + '30',
+    borderColor: COLORS.accent + '30',
   },
   promoAppliedInfo: {
     flex: 1,
@@ -475,11 +480,11 @@ const styles = StyleSheet.create({
   promoCode: {
     fontSize: SIZES.textBase,
     fontWeight: 'bold',
-    color: COLORS.success,
+    color: COLORS.accent,
   },
   promoDescription: {
     fontSize: SIZES.textSm,
-    color: COLORS.success,
+    color: COLORS.accent,
     marginTop: SIZES.xs,
   },
   orderSummary: {
@@ -513,12 +518,12 @@ const styles = StyleSheet.create({
   },
   savingsValue: {
     fontSize: SIZES.textBase,
-    color: COLORS.success,
+    color: COLORS.accent,
     fontWeight: '500',
   },
   discountValue: {
     fontSize: SIZES.textBase,
-    color: COLORS.success,
+    color: COLORS.accent,
     fontWeight: '500',
   },
   summaryDivider: {

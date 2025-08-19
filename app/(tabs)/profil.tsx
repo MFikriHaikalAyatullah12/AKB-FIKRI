@@ -1,33 +1,304 @@
-import { View, Text, StyleSheet, Image } from "react-native";
-import * as Animatable from 'react-native-animatable';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
+import {
+  Alert,
+  Image,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { COLORS, SHADOWS, SIZES } from '../../constants/theme';
+import { useAuth } from '../../context/AuthContext';
 
-export default function Profile() {
+const userProfile = {
+  name: 'Sarah Johnson',
+  email: 'sarah.johnson@gmail.com',
+  phone: '+1 (555) 123-4567',
+  avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face',
+  memberSince: '2023',
+  totalOrders: 24,
+  totalSpent: 1247.89,
+};
+
+interface MenuItemProps {
+  icon: string;
+  title: string;
+  subtitle?: string;
+  onPress: () => void;
+  showArrow?: boolean;
+  rightComponent?: React.ReactNode;
+}
+
+const MenuItem: React.FC<MenuItemProps> = ({
+  icon,
+  title,
+  subtitle,
+  onPress,
+  showArrow = true,
+  rightComponent,
+}) => (
+  <TouchableOpacity style={styles.menuItem} onPress={onPress}>
+    <View style={styles.menuItemLeft}>
+      <View style={styles.menuIcon}>
+        <Ionicons name={icon as any} size={20} color={COLORS.primary} />
+      </View>
+      <View style={styles.menuItemContent}>
+        <Text style={styles.menuItemTitle}>{title}</Text>
+        {subtitle && <Text style={styles.menuItemSubtitle}>{subtitle}</Text>}
+      </View>
+    </View>
+    
+    <View style={styles.menuItemRight}>
+      {rightComponent}
+      {showArrow && !rightComponent && (
+        <Ionicons name="chevron-forward" size={16} color={COLORS.textLight} />
+      )}
+    </View>
+  </TouchableOpacity>
+);
+
+export default function ProfilePage() {
+  const { logout, user } = useAuth();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+
+  // Use user data from AuthContext if available, otherwise fallback to default
+  const displayUser = user || userProfile;
+  const userName = user ? `${user.firstName} ${user.lastName}` : userProfile.name;
+
+  const handleEditProfile = () => {
+    Alert.alert('Edit Profile', 'Edit profile functionality would be implemented here.');
+  };
+
+  const handleOrderHistory = () => {
+    router.push('/order-history');
+  };
+
+  const handleAddresses = () => {
+    router.push('/addresses');
+  };
+
+  const handlePaymentMethods = () => {
+    router.push('/payment-methods');
+  };
+
+  const handleWishlist = () => {
+    router.push('/wishlist');
+  };
+
+  const handleReviews = () => {
+    Alert.alert('Reviews', 'Product reviews feature coming soon! Check the Featured section for now.');
+  };
+
+  const handleTrending = () => {
+    Alert.alert('Trending', 'Trending products feature coming soon! Check the Featured section for popular items.');
+  };
+
+  const handleAdvancedSearch = () => {
+    Alert.alert('Advanced Search', 'Advanced search feature coming soon! Use the search bar on the Home page for now.');
+  };
+
+  const handleNotifications = () => {
+    router.push('/notifications');
+  };
+
+  const handleHelpSupport = () => {
+    router.push('/help-support');
+  };
+
+  const handleAbout = () => {
+    router.push('/(tabs)/about');
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Sign Out',
+      'Are you sure you want to sign out?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await logout();
+              // Navigate to welcome screen (root index)
+              router.replace('/');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to sign out. Please try again.');
+            }
+          }
+        }
+      ]
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <Animatable.Text 
-        animation="fadeInDown" 
-        delay={200} 
-        style={styles.title}
-      >
-        Profil Pengguna
-      </Animatable.Text>
+      <StatusBar barStyle="dark-content" backgroundColor={COLORS.background} />
+      
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Profile</Text>
+        <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
+          <Ionicons name="create-outline" size={24} color={COLORS.primary} />
+        </TouchableOpacity>
+      </View>
 
-      <Animatable.View 
-        animation="fadeInUp" 
-        delay={400} 
-        style={styles.profileCard}
-      >
-        <Image 
-          source={require('../../assets/images/images1.jpeg')} 
-          style={styles.profileImage}
-        />
-        <Text style={styles.name}>M. FIKRI HAIKAL AYATULLAH</Text>
-        <Text style={styles.detail}>Kelas: <Text style={styles.bold}>6B</Text></Text>
-        <Text style={styles.detail}>NIM: <Text style={styles.bold}>105841105522</Text></Text>
-        <Text style={styles.detail}>Prodi: <Text style={styles.bold}>Informatika</Text></Text>
-        <Text style={styles.detail}>Fakultas: <Text style={styles.bold}>TEKNIK</Text></Text>
-        <Text style={styles.detail}>Departemen: <Text style={styles.bold}>Teknik Informatika</Text></Text>
-      </Animatable.View>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Profile Card */}
+        <View style={styles.profileCard}>
+          <Image source={{ uri: displayUser.avatar || userProfile.avatar }} style={styles.avatar} />
+          
+          <View style={styles.profileInfo}>
+            <Text style={styles.userName}>{userName}</Text>
+            <Text style={styles.userEmail}>{displayUser.email || userProfile.email}</Text>
+            <Text style={styles.memberSince}>Member since {userProfile.memberSince}</Text>
+          </View>
+          
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{userProfile.totalOrders}</Text>
+              <Text style={styles.statLabel}>Orders</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>${userProfile.totalSpent}</Text>
+              <Text style={styles.statLabel}>Spent</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Menu Sections */}
+        <View style={styles.menuSection}>
+          <Text style={styles.sectionTitle}>Shopping</Text>
+          
+          <MenuItem
+            icon="time-outline"
+            title="Order History"
+            subtitle="View your past orders"
+            onPress={handleOrderHistory}
+          />
+          
+          <MenuItem
+            icon="location-outline"
+            title="Shipping Addresses"
+            subtitle="Manage your addresses"
+            onPress={handleAddresses}
+          />
+          
+          <MenuItem
+            icon="card-outline"
+            title="Payment Methods"
+            subtitle="Manage your payment options"
+            onPress={handlePaymentMethods}
+          />
+          
+          <MenuItem
+            icon="heart-outline"
+            title="Wishlist"
+            subtitle="Your saved items"
+            onPress={handleWishlist}
+          />
+        </View>
+
+        <View style={styles.menuSection}>
+          <Text style={styles.sectionTitle}>Discover</Text>
+          
+          <MenuItem
+            icon="star-outline"
+            title="Reviews"
+            subtitle="Read and write product reviews"
+            onPress={handleReviews}
+          />
+          
+          <MenuItem
+            icon="trending-up-outline"
+            title="Trending"
+            subtitle="Popular and trending items"
+            onPress={handleTrending}
+          />
+          
+          <MenuItem
+            icon="search-outline"
+            title="Advanced Search"
+            subtitle="Find products with detailed filters"
+            onPress={handleAdvancedSearch}
+          />
+        </View>
+
+        <View style={styles.menuSection}>
+          <Text style={styles.sectionTitle}>Preferences</Text>
+          
+          <MenuItem
+            icon="notifications-outline"
+            title="Push Notifications"
+            subtitle="Order updates and promotions"
+            onPress={handleNotifications}
+            showArrow={false}
+            rightComponent={
+              <Switch
+                value={notificationsEnabled}
+                onValueChange={setNotificationsEnabled}
+                trackColor={{ false: COLORS.border, true: COLORS.primary + '30' }}
+                thumbColor={notificationsEnabled ? COLORS.primary : COLORS.textLight}
+              />
+            }
+          />
+          
+          <MenuItem
+            icon="moon-outline"
+            title="Dark Mode"
+            subtitle="Enable dark theme"
+            onPress={() => {}}
+            showArrow={false}
+            rightComponent={
+              <Switch
+                value={darkModeEnabled}
+                onValueChange={setDarkModeEnabled}
+                trackColor={{ false: COLORS.border, true: COLORS.primary + '30' }}
+                thumbColor={darkModeEnabled ? COLORS.primary : COLORS.textLight}
+              />
+            }
+          />
+        </View>
+
+        <View style={styles.menuSection}>
+          <Text style={styles.sectionTitle}>Support</Text>
+          
+          <MenuItem
+            icon="help-circle-outline"
+            title="Help & Support"
+            subtitle="FAQ and customer service"
+            onPress={handleHelpSupport}
+          />
+          
+          <MenuItem
+            icon="information-circle-outline"
+            title="About"
+            subtitle="App version and info"
+            onPress={handleAbout}
+          />
+        </View>
+
+        {/* Logout Button */}
+        <View style={styles.logoutSection}>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Ionicons name="log-out-outline" size={20} color={COLORS.error} />
+            <Text style={styles.logoutText}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* App Version */}
+        <View style={styles.versionContainer}>
+          <Text style={styles.versionText}>Version 1.0.0</Text>
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -35,49 +306,169 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0faff',
-    justifyContent: 'center',
+    backgroundColor: COLORS.background,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 24,
+    paddingTop: 50,
+    paddingHorizontal: SIZES.lg,
+    paddingBottom: SIZES.lg,
+    backgroundColor: COLORS.background,
   },
   title: {
-    fontSize: 26,
+    fontSize: SIZES.text3xl,
     fontWeight: 'bold',
-    color: '#2e3a59',
-    marginBottom: 24,
+    color: COLORS.textPrimary,
+  },
+  editButton: {
+    padding: SIZES.sm,
+  },
+  content: {
+    flex: 1,
   },
   profileCard: {
-    width: '90%',
-    backgroundColor: '#e6f7ff',
-    borderRadius: 20,
-    padding: 24,
+    backgroundColor: COLORS.background,
+    marginHorizontal: SIZES.lg,
+    marginBottom: SIZES.lg,
+    borderRadius: SIZES.radiusLg,
+    padding: SIZES.xl,
     alignItems: 'center',
-    elevation: 6,
-    shadowColor: '#a5d8ff',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 4 },
+    ...SHADOWS.medium,
   },
-  profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 16,
-    borderWidth: 3,
-    borderColor: '#9bd0ff',
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: SIZES.lg,
   },
-  name: {
-    fontSize: 22,
+  profileInfo: {
+    alignItems: 'center',
+    marginBottom: SIZES.lg,
+  },
+  userName: {
+    fontSize: SIZES.text2xl,
     fontWeight: 'bold',
-    color: '#2e3a59',
-    marginBottom: 12,
+    color: COLORS.textPrimary,
+    marginBottom: SIZES.xs,
   },
-  detail: {
-    fontSize: 16,
-    color: '#44566c',
-    marginVertical: 4,
+  userEmail: {
+    fontSize: SIZES.textBase,
+    color: COLORS.textSecondary,
+    marginBottom: SIZES.xs,
   },
-  bold: {
+  memberSince: {
+    fontSize: SIZES.textSm,
+    color: COLORS.textLight,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.backgroundLight,
+    borderRadius: SIZES.radiusSm,
+    paddingVertical: SIZES.lg,
+    paddingHorizontal: SIZES.xl,
+  },
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statValue: {
+    fontSize: SIZES.textXl,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    marginBottom: SIZES.xs,
+  },
+  statLabel: {
+    fontSize: SIZES.textSm,
+    color: COLORS.textSecondary,
+  },
+  statDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: COLORS.border,
+    marginHorizontal: SIZES.lg,
+  },
+  menuSection: {
+    backgroundColor: COLORS.background,
+    marginHorizontal: SIZES.lg,
+    marginBottom: SIZES.lg,
+    borderRadius: SIZES.radiusLg,
+    padding: SIZES.lg,
+    ...SHADOWS.medium,
+  },
+  sectionTitle: {
+    fontSize: SIZES.textLg,
     fontWeight: '600',
-    color: '#1e293b',
+    color: COLORS.textPrimary,
+    marginBottom: SIZES.lg,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: SIZES.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  menuItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  menuIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: COLORS.primary + '10',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: SIZES.lg,
+  },
+  menuItemContent: {
+    flex: 1,
+  },
+  menuItemTitle: {
+    fontSize: SIZES.textBase,
+    fontWeight: '500',
+    color: COLORS.textPrimary,
+    marginBottom: SIZES.xs,
+  },
+  menuItemSubtitle: {
+    fontSize: SIZES.textSm,
+    color: COLORS.textSecondary,
+  },
+  menuItemRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoutSection: {
+    marginHorizontal: SIZES.lg,
+    marginBottom: SIZES.lg,
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.error + '10',
+    borderRadius: SIZES.radiusLg,
+    paddingVertical: SIZES.lg,
+    borderWidth: 1,
+    borderColor: COLORS.error + '20',
+  },
+  logoutText: {
+    fontSize: SIZES.textBase,
+    color: COLORS.error,
+    fontWeight: '600',
+    marginLeft: SIZES.sm,
+  },
+  versionContainer: {
+    alignItems: 'center',
+    paddingBottom: SIZES.xl,
+  },
+  versionText: {
+    fontSize: SIZES.textSm,
+    color: COLORS.textLight,
   },
 });

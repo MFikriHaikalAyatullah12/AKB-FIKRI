@@ -17,6 +17,8 @@ export const API_CONFIG = {
     REGISTER: '/auth/register',
     REFRESH_TOKEN: '/auth/refresh',
     LOGOUT: '/auth/logout',
+    FORGOT_PASSWORD: '/auth/forgot-password',
+    RESET_PASSWORD: '/auth/reset-password',
     
     // Products
     PRODUCTS: '/products',

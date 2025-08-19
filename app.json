@@ -1,23 +1,36 @@
 {
   "expo": {
-    "name": "expo-Fikri",
-    "slug": "expo-Fikri",
+    "name": "AKB-FIKRI Fashion Store",
+    "slug": "akb-fikri-fashion",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "expofikri",
+    "scheme": "akbfikri",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.akbfikri.fashionstore"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
-      "package": "com.fikrimberr.expoFikri"
+      "package": "com.akbfikri.fashionstore",
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ],
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
@@ -40,7 +53,9 @@
       "typedRoutes": true
     },
     "extra": {
-      "router": {},
+      "router": {
+        "origin": false
+      },
       "eas": {
         "projectId": "805a3a8a-6caf-4efe-873f-ba87c7cb9a69"
       }

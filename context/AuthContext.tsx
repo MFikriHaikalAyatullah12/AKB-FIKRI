@@ -3,6 +3,7 @@ import React, { createContext, ReactNode, useContext, useEffect, useReducer } fr
 import { authService } from '../services/authService';
 import { AuthTokens, LoginRequest, RegisterRequest, User } from '../types/api';
 import { STORAGE_KEYS } from '../utils/config';
+import { clearCorruptedStorageData, safeJsonParse } from '../utils/storageUtils';
 
 // Auth State Type
 interface AuthState {
@@ -108,6 +109,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
+  registerOnly: (userData: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => Promise<void>;
   clearError: () => void;
@@ -133,25 +135,47 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       dispatch({ type: 'AUTH_LOADING', payload: true });
 
-      const [storedTokens, storedUser] = await Promise.all([
+      const [storedAccessToken, storedRefreshToken, storedUser, storedExpiresIn] = await Promise.all([
         AsyncStorage.getItem(STORAGE_KEYS.AUTH_TOKEN),
+        AsyncStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN),
         AsyncStorage.getItem(STORAGE_KEYS.USER_DATA),
+        AsyncStorage.getItem('AUTH_EXPIRES_IN'),
       ]);
 
-      if (storedTokens && storedUser) {
-        const tokens = JSON.parse(storedTokens);
-        const user = JSON.parse(storedUser);
-
-        // Validate token by fetching current user
+      if (storedAccessToken && storedRefreshToken && storedUser) {
         try {
-          const currentUser = await authService.getCurrentUser();
-          dispatch({
-            type: 'AUTH_INITIALIZE',
-            payload: { user: currentUser, tokens },
-          });
-        } catch (error) {
-          // Token is invalid, clear stored data
-          await clearStoredAuthData();
+          // Use safe JSON parsing to prevent crashes
+          const user = safeJsonParse<User | null>(storedUser, null);
+          
+          if (!user) {
+            // If user data is corrupted, clear all data
+            await clearStoredAuthData();
+            dispatch({ type: 'AUTH_INITIALIZE', payload: { user: null, tokens: null } });
+            return;
+          }
+
+          const tokens = {
+            accessToken: storedAccessToken,
+            refreshToken: storedRefreshToken,
+            expiresIn: storedExpiresIn ? parseInt(storedExpiresIn) : 3600, // Default 1 hour
+          };
+
+          // Validate token by fetching current user
+          try {
+            const currentUser = await authService.getCurrentUser();
+            dispatch({
+              type: 'AUTH_INITIALIZE',
+              payload: { user: currentUser, tokens },
+            });
+          } catch (error) {
+            // Token is invalid, clear stored data
+            await clearStoredAuthData();
+            dispatch({ type: 'AUTH_INITIALIZE', payload: { user: null, tokens: null } });
+          }
+        } catch (parseError) {
+          // JSON parse error, clear corrupted data
+          console.error('Failed to parse stored user data:', parseError);
+          await clearCorruptedStorageData();
           dispatch({ type: 'AUTH_INITIALIZE', payload: { user: null, tokens: null } });
         }
       } else {
@@ -159,6 +183,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     } catch (error) {
       console.error('Auth initialization error:', error);
+      await clearCorruptedStorageData(); // Clear any corrupted data
       dispatch({ type: 'AUTH_INITIALIZE', payload: { user: null, tokens: null } });
     }
   };
@@ -168,6 +193,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       AsyncStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, tokens.accessToken),
       AsyncStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, tokens.refreshToken),
       AsyncStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(user)),
+      AsyncStorage.setItem('AUTH_EXPIRES_IN', tokens.expiresIn.toString()),
     ]);
   };
 
@@ -176,6 +202,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       STORAGE_KEYS.AUTH_TOKEN,
       STORAGE_KEYS.REFRESH_TOKEN,
       STORAGE_KEYS.USER_DATA,
+      'AUTH_EXPIRES_IN',
     ]);
   };
 
@@ -199,9 +226,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const register = async (userData: RegisterRequest) => {
     try {
+      console.log('Starting registration process...', { email: userData.email });
       dispatch({ type: 'AUTH_LOADING', payload: true });
 
       const response = await authService.register(userData);
+      console.log('Registration successful:', { userId: response.user.id });
       
       await storeAuthData(response.user, response.tokens);
       
@@ -210,6 +239,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
         payload: { user: response.user, tokens: response.tokens },
       });
     } catch (error: any) {
+      console.error('Registration failed:', error);
+      dispatch({ type: 'AUTH_ERROR', payload: error.message });
+      throw error;
+    }
+  };
+
+  const registerOnly = async (userData: RegisterRequest) => {
+    try {
+      console.log('Starting registration-only process...', { email: userData.email });
+      dispatch({ type: 'AUTH_LOADING', payload: true });
+
+      const response = await authService.register(userData);
+      console.log('Registration successful (no auto-login):', { userId: response.user.id });
+      
+      // Don't store auth data or set authenticated state
+      // Just finish loading and show success
+      dispatch({ type: 'AUTH_LOADING', payload: false });
+      
+    } catch (error: any) {
+      console.error('Registration failed:', error);
       dispatch({ type: 'AUTH_ERROR', payload: error.message });
       throw error;
     }
@@ -247,6 +296,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     ...state,
     login,
     register,
+    registerOnly,
     logout,
     updateUser,
     clearError,
