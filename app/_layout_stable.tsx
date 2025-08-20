@@ -54,21 +54,28 @@ export default function RootLayout() {
     prepare();
   }, [loaded, error]);
 
-  // Show loading while app is preparing
   if (!appIsReady) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#6366f1' }}>
-        <ActivityIndicator size="large" color="#fff" />
-        <Text style={{ color: '#fff', marginTop: 16, fontSize: 16 }}>
-          Loading AKB Fashion...
-        </Text>
+      <View style={{ 
+        flex: 1, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        backgroundColor: '#fff' 
+      }}>
+        <ActivityIndicator size="large" color="#FF6B6B" />
+        <Text style={{ 
+          marginTop: 20, 
+          fontSize: 16, 
+          color: '#666',
+          textAlign: 'center'
+        }}>Starting AKB Fashion...</Text>
       </View>
     );
   }
 
   return (
-    <ErrorBoundary>
-      <AuthProvider>
+    <AuthProvider>
+      <ErrorBoundary>
         <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
           <Stack>
             <Stack.Screen
@@ -91,7 +98,7 @@ export default function RootLayout() {
             />
           </Stack>
         </View>
-      </AuthProvider>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </AuthProvider>
   );
 }

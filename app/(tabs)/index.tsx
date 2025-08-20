@@ -2,16 +2,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-    Alert,
-    Dimensions,
-    FlatList,
-    RefreshControl,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Alert,
+  Dimensions,
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { CategoryCard } from '../../components/CategoryCard';
 import { LoadingScreen } from '../../components/LoadingScreen';
@@ -19,6 +19,7 @@ import { ProductCard } from '../../components/ProductCard';
 import { ProductSizeModal } from '../../components/ProductSizeModal';
 import { SaleBanner } from '../../components/SaleBanner';
 import { COLORS, SHADOWS, SIZES } from '../../constants/theme';
+import { loadAdditionalFonts } from '../../utils/fontLoader';
 
 const { width } = Dimensions.get('window');
 
@@ -119,9 +120,10 @@ export default function HomePage() {
         setIsLoading(true);
         setError(null);
         
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Load additional fonts in the background without waiting
+        loadAdditionalFonts().catch(console.warn);
         
+        // Remove artificial delay - load immediately
         setIsLoading(false);
       } catch (err) {
         console.error('Error loading data:', err);
@@ -134,7 +136,7 @@ export default function HomePage() {
   }, []);
 
   if (isLoading) {
-    return <LoadingScreen message="Loading fashion store..." />;
+    return <LoadingScreen minimal={true} />;
   }
 
   if (error) {

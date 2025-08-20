@@ -4,11 +4,22 @@ import { COLORS, SIZES } from '../constants/theme';
 
 interface LoadingScreenProps {
   message?: string;
+  minimal?: boolean;
 }
 
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({ 
-  message = 'Loading...' 
+  message = 'Loading...',
+  minimal = false
 }) => {
+  // Ultra minimal loading for faster perceived performance
+  if (minimal) {
+    return (
+      <View style={styles.minimalContainer}>
+        <ActivityIndicator size="small" color={COLORS.primary} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <ActivityIndicator size="large" color={COLORS.primary} />
@@ -24,6 +35,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLORS.background,
     paddingHorizontal: SIZES.lg,
+  },
+  minimalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
   },
   message: {
     marginTop: SIZES.lg,
