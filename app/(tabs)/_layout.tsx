@@ -30,7 +30,7 @@ export default function TabLayout() {
           tabBarHideOnKeyboard: true,
         }}
       >
-      {/* Hidden screens - not displayed in tab bar */}
+      {/* Hide all other tabs - only show 5 main tabs */}
       <Tabs.Screen name="cart" options={{ href: null }} />
       <Tabs.Screen name="search" options={{ href: null }} />
       <Tabs.Screen name="trends" options={{ href: null }} />
@@ -43,6 +43,9 @@ export default function TabLayout() {
       <Tabs.Screen name="profil-backup" options={{ href: null }} />
       <Tabs.Screen name="search-backup" options={{ href: null }} />
       <Tabs.Screen name="profile-new" options={{ href: null }} />
+      <Tabs.Screen name="about-new" options={{ href: null }} />
+      <Tabs.Screen name="cart-new-backup" options={{ href: null }} />
+      <Tabs.Screen name="categories" options={{ href: null }} />
       <Tabs.Screen name="categories/[id]" options={{ href: null }} />
       <Tabs.Screen name="featured/[id]" options={{ href: null }} />
       <Tabs.Screen name="user/[id]" options={{ href: null }} />
@@ -59,7 +62,7 @@ export default function TabLayout() {
               size={size} 
               color={color} 
             />
-          ),
+          )
         }}
       />
       

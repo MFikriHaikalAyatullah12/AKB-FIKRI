@@ -2,14 +2,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  Alert,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Alert,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { COLORS, SHADOWS, SIZES } from '../../constants/theme';
 import { useAuth } from '../../context/AuthContext';
@@ -46,17 +46,8 @@ export default function LoginScreen() {
     try {
       await login(formData);
       
-      // Show success message briefly then navigate
-      Alert.alert(
-        'Welcome Back!',
-        'You have successfully signed in.',
-        [
-          {
-            text: 'Continue',
-            onPress: () => router.replace('/(tabs)')
-          }
-        ]
-      );
+      // Direct redirect to main app without alert
+      router.replace('/(tabs)');
     } catch (error: any) {
       console.error('Login error:', error);
       Alert.alert(
@@ -194,6 +185,14 @@ export default function LoginScreen() {
               <Ionicons name="logo-facebook" size={24} color="#4267B2" />
             </TouchableOpacity>
           </View>
+
+          {/* Register Link */}
+          <View style={styles.registerContainer}>
+            <Text style={styles.registerText}>Belum punya akun? </Text>
+            <TouchableOpacity onPress={() => router.push('/auth/register')}>
+              <Text style={styles.registerLink}>Register now</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -302,5 +301,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     ...SHADOWS.small,
+  },
+  registerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    paddingVertical: 10,
+  },
+  registerText: {
+    fontSize: SIZES.textBase,
+    color: COLORS.textSecondary,
+  },
+  registerLink: {
+    fontSize: SIZES.textBase,
+    color: COLORS.primary,
+    fontWeight: 'bold',
   },
 });

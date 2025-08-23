@@ -1,4 +1,5 @@
 # 🚨 ULTRA MINIMAL SETUP - FINAL SOLUTION
+# cd /workspaces/AKB-FIKRI && npx expo start --clear
 
 ## 🎯 **MASALAH YANG DIATASI:**
 App stuck di "Bundling 100.00%" - tidak pernah masuk ke app content

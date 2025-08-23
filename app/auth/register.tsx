@@ -2,14 +2,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  Alert,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Alert,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { COLORS, SHADOWS, SIZES } from '../../constants/theme';
 import { useAuth } from '../../context/AuthContext';
@@ -58,17 +58,8 @@ export default function RegisterScreen() {
 
       await registerOnly(userData);
       
-      // Show success message and redirect to login
-      Alert.alert(
-        'Account Created Successfully!',
-        `Welcome ${userData.firstName}! Your account has been created. Please sign in to continue shopping.`,
-        [
-          {
-            text: 'Sign In Now',
-            onPress: () => router.push('/auth/login')
-          }
-        ]
-      );
+      // Direct redirect to login without alert
+      router.replace('/auth/login');
     } catch (error: any) {
       console.error('Registration error:', error);
       Alert.alert(
@@ -229,6 +220,14 @@ export default function RegisterScreen() {
               <Ionicons name="logo-facebook" size={24} color="#4267B2" />
             </TouchableOpacity>
           </View>
+
+          {/* Login Link */}
+          <View style={styles.loginContainer}>
+            <Text style={styles.loginText}>Sudah punya akun? </Text>
+            <TouchableOpacity onPress={() => router.push('/auth/login')}>
+              <Text style={styles.loginLink}>Login</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -337,5 +336,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     ...SHADOWS.small,
+  },
+  loginContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    paddingVertical: 10,
+  },
+  loginText: {
+    fontSize: SIZES.textBase,
+    color: COLORS.textSecondary,
+  },
+  loginLink: {
+    fontSize: SIZES.textBase,
+    color: COLORS.primary,
+    fontWeight: 'bold',
   },
 });
